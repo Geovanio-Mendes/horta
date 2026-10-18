@@ -58,8 +58,8 @@ input,select,textarea{font-size:16px}button,select,input[type=text],input[type=n
 }
 .off{background:var(--warn);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:.88rem}
 .off[hidden],#inst[hidden]{display:none}
-.card{animation:up .25s ease}@keyframes up{from{opacity:0;transform:translateY(6px)}}
-.nav[hidden],#clima[hidden],#sheet[hidden]{display:none}
+#view.anim>*{animation:up .2s ease}@keyframes up{from{opacity:0;transform:translateY(6px)}}
+.nav[hidden],#clima[hidden],#sheet[hidden],#loc[hidden]{display:none}
 #tabs button span{margin-right:4px}
 .hero{background:linear-gradient(135deg,#4f9a49,#25502a);color:#fff;border-radius:18px;padding:16px;margin-bottom:10px}
 .hero button{margin-top:8px;font-size:.85rem;padding:4px 10px}
@@ -74,7 +74,11 @@ input,select,textarea{font-size:16px}button,select,input[type=text],input[type=n
 @keyframes sl{from{transform:translateY(100%)}}
 @media (max-width:600px){#tabs button span{display:block;margin:0;font-size:1.15rem;line-height:1.1}#tabs button{font-size:.7rem}}
 .pl{border-top:1px solid var(--bd);padding:8px 0;font-size:.9rem}.pb{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:5px 0}.pb i{display:block;height:100%;background:var(--ac)}.pb i.rd{background:#e0a21b}
-.pl button{font-size:.8rem;padding:3px 8px;min-height:32px}.sh input,.sh select{width:100%}
+.pl button{font-size:.8rem;padding:3px 8px;min-height:32px}#sheet .sh input,#sheet .sh select{width:100%}
+button{touch-action:manipulation}button:active{transform:scale(.96)}
+#tabs button span{pointer-events:none}#tabs button{min-height:52px}
+.locbar{margin-bottom:8px}.chip{width:100%;text-align:left;border-radius:12px;padding:10px 14px;font-size:.95rem}
+#loc{position:fixed;inset:0;z-index:50}.sh .bar{margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -84,6 +88,8 @@ input,select,textarea{font-size:16px}button,select,input[type=text],input[type=n
 <div id="ios" class="off" hidden>No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início" para instalar.</div>
 <div class="sub">Épocas de plantio, clima e fase da lua por região do Brasil<span id="ready"></span> <button id="inst" hidden>📲 Instalar app</button></div>
 <div class="bar" id="tabs"></div>
+<div class="locbar"><button id="chip" class="chip">📍 <span id="chiptxt"></span> ▾</button></div>
+<div id="loc" hidden><div class="bk"></div><div class="sh"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:1.1rem">📍 Local e clima</b><button id="locx">Concluir</button></div>
 <div class="bar">
   <label>Região: <select id="reg"><option value="mgne">Nordeste de Minas (quente)</option><option value="sudeste">Sudeste</option><option value="sul">Sul</option><option value="cooeste">Centro-Oeste</option><option value="nordeste">Nordeste</option><option value="norte">Norte</option></select></label>
   <label>Ambiente: <select id="env"><option value="">Todos</option><option>canteiro</option><option>vaso</option><option>estufa</option></select></label>
@@ -91,6 +97,7 @@ input,select,textarea{font-size:16px}button,select,input[type=text],input[type=n
 </div>
 <div id="clima" class="card"></div>
 <div id="tempo" class="card"><div class="row"><input type="text" id="cid" placeholder="Digite sua cidade (ex.: Belo Horizonte)"><button id="bc">Ver clima</button></div><div id="tinfo"><small>Busque sua cidade para ver o clima e saber se o dia é bom para plantar.</small></div></div>
+</div></div>
 <div class="nav"><button id="prev">◀</button><b id="title"></b><button id="next">▶</button><button id="today">Hoje</button></div>
 <div id="view"></div>
 <div class="leg">Regra tradicional usada: folhas → lua nova/crescente · frutos → crescente/cheia · flores → crescente · raízes, bulbos e tubérculos → minguante. É uma tradição agrícola popular; a época (mês) é o que mais pesa no resultado.</div>
@@ -141,7 +148,7 @@ function lua(d){const t=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),15);le
 let mode="painel",cur=new Date(),sel=new Date();
 const $=id=>document.getElementById(id);
 const env=()=>$("env").value;
-const pool=()=>allV().filter(v=>!CFG.off.includes(v.n)&&(!env()||v.a.includes(env())));
+let PC=null;const pool=()=>PC||(PC=allV().filter(v=>!CFG.off.includes(v.n)&&(!env()||v.a.includes(env()))));
 const same=(a,b)=>a.toDateString()===b.toDateString();
 function tags(list,cls){return list.map(v=>`<span class="tag ${cls||""}" data-vn="${v.n}">${v.n}</span>`).join("")||"<small>nada</small>";}
 function plan(d){const L=lua(d),mm=d.getMonth()+1;
@@ -155,11 +162,12 @@ function dayCard(d){const p=plan(d);
  ${verdict(d)}<p><b>${$("moon").checked?"Plantar hoje (época + lua ideais)":"Plantar hoje (época ideal)"}</b><br>${okTags(p.ok,d)}</p>
  ${$("moon").checked?`<p><b>${p.ok.length?"Época boa, mas a lua não é a ideal":"Hoje nenhuma tem época e lua ideais. Época boa, com a próxima data ideal"}</b><br>${waitList(p.wait,d)}</p>`:""}
  ${p.ok.length?`<hr style="border:0;border-top:1px solid var(--bd)">`+p.ok.map(v=>`<p><b>${v.n}</b> <small>(${GRUPO[v.g]} · ciclo ${v.c})</small><br>Variedades: ${v.v}<br>Meses nesta região: ${v.m.map(x=>MES[x-1].slice(0,3)).join(", ")}<br>Ambientes: ${v.a.join(", ")}${(MAN[v.n]||{}).e?`<br>Espaçamento: ${MAN[v.n].e}`:""}</p>`).join(""):""}</div>`;}
-function render(){
+function render(){PC=null;
  const TB={painel:["🏠","Painel"],dia:["📅","Dia"],semana:["🗓️","Semana"],mes:["📆","Mês"],ano:["🌾","Ano"],cfg:["⚙️","Config"]};
- $("tabs").innerHTML=Object.keys(TB).map(m=>`<button class="${m==mode?"on":""}" data-m="${m}"><span>${TB[m][0]}</span>${TB[m][1]}</button>`).join("");
+ if(!$("tabs").children.length)$("tabs").innerHTML=Object.keys(TB).map(m=>`<button data-m="${m}"><span>${TB[m][0]}</span>${TB[m][1]}</button>`).join("");
+ [...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.m==mode));
  const v=$("view");const R=REG[$("reg").value];$("clima").innerHTML=`<b>${R.nome}</b><br>${R.clima}<br><small>Dica: ${R.dica}</small>`;
- document.querySelector(".nav").hidden=mode=="painel"||mode=="cfg";$("clima").hidden=mode=="painel";
+ document.querySelector(".nav").hidden=mode=="painel"||mode=="cfg";chipTxt();
  if(mode=="painel"){$("title").textContent="Hoje";v.innerHTML=painelHTML();return}
  if(mode=="cfg"){$("title").textContent="Configurações";v.innerHTML=cfgHTML();return}
  if(mode=="dia"){$("title").textContent=sel.toLocaleDateString("pt-BR",{dateStyle:"long"});v.innerHTML=dayCard(sel);}
@@ -176,7 +184,7 @@ function render(){
  else{$("title").textContent=cur.getFullYear();
   v.innerHTML=`<div class="yr">${MES.map((M,i)=>`<div class="card"><h3>${M}</h3>${tags(pool().filter(x=>x.m.includes(i+1)))}</div>`).join("")}</div>`;}
 }
-$("tabs").onclick=e=>{if(e.target.dataset.m){mode=e.target.dataset.m;render()}};
+$("tabs").onclick=e=>{const b=e.target.closest("[data-m]");if(!b||b.dataset.m==mode)return;mode=b.dataset.m;[...$("tabs").children].forEach(x=>x.classList.toggle("on",x==b));scrollTo(0,0);const vw=$("view");vw.classList.remove("anim");void vw.offsetWidth;vw.classList.add("anim");requestAnimationFrame(()=>render())};
 $("view").onclick=e=>{const t=e.target.closest("[data-d]");if(t){sel=new Date(t.dataset.d);cur=new Date(sel);mode="dia";render()}};
 ["env","moon","reg"].forEach(i=>$(i).onchange=()=>{CFG.env=$("env").value;CFG.moon=$("moon").checked;CFG.reg=$("reg").value;saveCfg();syncTop();if(W&&W.adm&&!inReg(W.adm)){W=null;$("tinfo").innerHTML="<small>Você mudou a região. Busque uma cidade dessa região para ver o clima.</small>"}render()});
 $("today").onclick=()=>{cur=new Date();sel=new Date();render()};
@@ -220,7 +228,7 @@ async function loadPlace(c,name){const t=$("tinfo");t.textContent="Carregando pr
   const data={};f.daily.time.forEach((k,i)=>data[k]={tmax:Math.round(f.daily.temperature_2m_max[i]),tmin:Math.round(f.daily.temperature_2m_min[i]),rain:+(f.daily.precipitation_sum[i]||0).toFixed(1),prob:f.daily.precipitation_probability_max[i]||0,wind:Math.round(f.daily.wind_speed_10m_max[i])});
   const alt=norm(c.name)!==norm(name);W={city:(alt?name:c.name)+" - "+c.admin1,adm:c.admin1,data};
   t.innerHTML=`<b>${W.city}</b>${alt?` <small>(no mapa consta como ${c.name})</small>`:""} · agora ${Math.round(f.current.temperature_2m)}°C, umidade ${f.current.relative_humidity_2m}%`;
-  try{localStorage.setItem("cidade",name);localStorage.setItem("clima2",JSON.stringify({q:name.toLowerCase(),city:W.city,adm:c.admin1,data,ts:Date.now()}))}catch(e){}
+  try{localStorage.setItem("cidade",name);localStorage.setItem("clima2",JSON.stringify({q:name.toLowerCase(),city:W.city,adm:c.admin1,data,ts:Date.now()}))}catch(e){}closeLoc();
  }catch(e){if(!useSaved(name)){W=null;t.innerHTML=`<small>${MSG()}</small>`}}
  mode="painel";sel=new Date();cur=new Date();render();}
 $("tinfo").addEventListener("click",e=>{const k=e.target.dataset.pick;if(k!==undefined)loadPlace(CAND[k],$("cid").value.trim())});
@@ -269,6 +277,11 @@ $("view").addEventListener("click",e=>{const t=e.target,d=t.dataset;
  else return;
  saveCfg();applyCfg();syncTop();render()});
 syncTop();applyCfg();
+
+const chipTxt=()=>{$("chiptxt").textContent=(W?W.city.split(" - ")[0]:"Escolher cidade")+" · "+REG[CFG.reg].nome.split(" (")[0]+(CFG.env?" · "+CFG.env:"")+(CFG.moon?" · 🌙":"")};
+const openLoc=()=>{$("loc").hidden=false},closeLoc=()=>{$("loc").hidden=true};
+$("chip").onclick=openLoc;$("locx").onclick=closeLoc;$("loc").querySelector(".bk").onclick=closeLoc;
+document.addEventListener("click",e=>{if(e.target.dataset.loc!==undefined)openLoc()});
 
 const MAN={
 "Alface":{e:"20 a 30 cm entre plantas e entre linhas (americana: espaçamento maior)",p:"Semeie em bandeja e transplante com 20 a 30 dias, quando a muda tiver 4 a 6 folhas.",m:"Regas leves e frequentes, solo rico em matéria orgânica. No calor, use sombrite e plante em horário fresco. Colha antes do pendoamento.",v:"3 a 5 L por planta"},
@@ -321,7 +334,7 @@ function painelHTML(){const d=new Date(),p=plan(d),w=wd(d),hr=d.getHours(),g=hr<
  const days=[...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);const q=plan(x),y=wd(x),l=y?lvl(x):-1;
   return `<div class="sc" data-d="${x.toISOString()}"><small>${i?DS[x.getDay()]:"Hoje"}</small><b>${x.getDate()}</b><span>${q.L.icon}</span>${y?`<small>${y.tmax}°/${y.tmin}°</small><div class="rb"><i style="height:${Math.min(100,y.rain*6)}%"></i></div><small>${y.rain} mm</small>`:`<small>—</small>`}<i class="dot l${l<0?"n":l}"></i></div>`}).join("");
  return `<div class="hero"><div style="display:flex;justify-content:space-between;align-items:center"><div><small>${g}!</small><div style="font-size:1.15rem;font-weight:600">${DS[d.getDay()]}, ${d.getDate()} de ${MES[d.getMonth()]}</div></div><span style="font-size:2.6rem">${p.L.icon}</span></div>
-<div style="margin-top:6px">Lua ${FASE[p.L.f]} · ${W?W.city+" · "+(w?w.tmin+"° a "+w.tmax+"°C":"sem previsão"):"busque sua cidade para ver o clima"}</div>${W?`<button data-rf>↻ Atualizar clima</button>`:""}</div>
+<div style="margin-top:6px">Lua ${FASE[p.L.f]} · ${W?W.city+" · "+(w?w.tmin+"° a "+w.tmax+"°C":"sem previsão"):"busque sua cidade para ver o clima"}</div>${W?`<button data-rf>↻ Atualizar clima</button>`:`<button data-loc>📍 Escolher cidade</button>`}</div>
 ${verdict(d)}
 <div class="card"><b>🌱 Plantar agora</b> <small>(${p.ok.length})</small><br>${okTags(p.ok,d)}<br><small>Toque em uma hortaliça para ver os detalhes.</small></div>
 ${horta()}
