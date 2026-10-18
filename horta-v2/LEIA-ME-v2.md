@@ -5,6 +5,7 @@ Mantenha todos juntos na mesma pasta, em um site com endereço https (GitHub Pag
 
 ## Novidades da v2
 - Feito para qualquer pessoa: começa na região Sudeste e cada um escolhe a sua região, ambiente e cidade.
+- A busca de cidades é só do Brasil e só da região escolhida (se houver cidades homônimas, o app pede para escolher).
 - Aviso quando estiver sem internet.
 - Funciona sem internet depois da primeira visita (a primeira abertura precisa de conexão).
 - Sem internet, mostra a última previsão do tempo salva para a cidade buscada.
@@ -14,4 +15,4 @@ Mantenha todos juntos na mesma pasta, em um site com endereço https (GitHub Pag
 ## Publicar no GitHub Pages (junto da v1)
 1. No repositório, Add file > Upload files.
 2. Arraste a PASTA horta-v2 inteira. O site fica em https://SEU-USUARIO.github.io/horta/horta-v2/
-3. Para atualizar no futuro: troque o index.html e aumente "horta2-v1" para "horta2-v2" em sw-v2.js.
+3. Para atualizar no futuro: troque o index.html e aumente o número (horta2-v2 para horta2-v3, e assim por diante) em sw-v2.js.

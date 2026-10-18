@@ -158,7 +158,7 @@ function render(){
 }
 $("tabs").onclick=e=>{if(e.target.dataset.m){mode=e.target.dataset.m;render()}};
 $("view").onclick=e=>{const t=e.target.closest("[data-d]");if(t){sel=new Date(t.dataset.d);cur=new Date(sel);mode="dia";render()}};
-["env","moon","reg"].forEach(i=>$(i).onchange=()=>{CFG.env=$("env").value;CFG.moon=$("moon").checked;CFG.reg=$("reg").value;saveCfg();render()});
+["env","moon","reg"].forEach(i=>$(i).onchange=()=>{CFG.env=$("env").value;CFG.moon=$("moon").checked;CFG.reg=$("reg").value;saveCfg();syncTop();if(W&&W.adm&&!inReg(W.adm)){W=null;$("tinfo").innerHTML="<small>Você mudou a região. Busque uma cidade dessa região para ver o clima.</small>"}render()});
 $("today").onclick=()=>{cur=new Date();sel=new Date();render()};
 function step(k){const d=new Date(mode=="dia"?sel:cur);
  if(mode=="dia")d.setDate(d.getDate()+k);else if(mode=="semana")d.setDate(d.getDate()+7*k);else if(mode=="mes"){d.setDate(1);d.setMonth(d.getMonth()+k)}else d.setFullYear(d.getFullYear()+k);
@@ -180,16 +180,29 @@ function verdict(d){const w=wd(d);
  if(!m.length)m.push("tempo estável, sem riscos importantes");
  const t=["Bom dia para plantar ✅","Dia com atenção ⚠️","Melhor adiar o plantio ⛔"][n];
  return `<div class="card" style="background:var(--${n?"warn":"ac2"})"><b>${t}</b><br><small>${W.city}: mín ${w.tmin}°C · máx ${w.tmax}°C · chuva ${w.rain} mm (${w.prob}%) · vento ${w.wind} km/h</small><br>${m.join("; ")}.<br><small>Hortaliças com ⚠ não combinam com a temperatura prevista.</small></div>`}
+const ESTADOS={sul:["parana","santa catarina","rio grande do sul"],sudeste:["minas gerais","sao paulo","rio de janeiro","espirito santo"],mgne:["minas gerais"],cooeste:["goias","mato grosso","mato grosso do sul","distrito federal","federal district"],nordeste:["maranhao","piaui","ceara","rio grande do norte","paraiba","pernambuco","alagoas","sergipe","bahia"],norte:["acre","amapa","amazonas","para","rondonia","roraima","tocantins"]};
+const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+const inReg=a=>(ESTADOS[CFG.reg]||[]).includes(norm(a));
+let CAND=[];
+const MSG=()=>navigator.onLine?"Não consegui obter o clima agora. Confira o nome da cidade e tente de novo.":"Sem internet no momento. Conecte-se para ver o clima de hoje.";
 async function loadCity(name){const t=$("tinfo");t.textContent="Buscando…";
- try{const g=await(await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(name)+"&count=1&language=pt&country_code=BR")).json();
-  if(!g.results)throw new Error("nf");const c=g.results[0];
-  const f=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.latitude}&longitude=${c.longitude}&current=temperature_2m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=7`)).json();
+ try{const g=await(await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(name)+"&count=50&language=pt&countryCode=BR&country_code=BR")).json();
+  const br=(g.results||[]).filter(r=>r.country_code==="BR");
+  if(!br.length){t.innerHTML=`<small>Não encontrei "${name}" no Brasil. Confira o nome da cidade.</small>`;return}
+  CAND=br.filter(r=>inReg(r.admin1));
+  if(!CAND.length){const o=br.slice(0,3).map(r=>r.name+" - "+r.admin1).join(", ");t.innerHTML=`<small>Não encontrei "${name}" na região selecionada (${REG[CFG.reg].nome}). Encontrei em: ${o}. Troque a região no topo para usar essa cidade.</small>`;return}
+  if(CAND.length>1){t.innerHTML="Mais de uma cidade encontrada, escolha:<br>"+CAND.map((r,k)=>`<button data-pick="${k}">${r.name} - ${r.admin1}${r.admin2?" ("+r.admin2+")":""}</button>`).join(" ");return}
+  await loadPlace(CAND[0],name)
+ }catch(e){if(!useSaved(name)){W=null;t.innerHTML=`<small>${MSG()}</small>`}mode="dia";sel=new Date();cur=new Date();render()}}
+async function loadPlace(c,name){const t=$("tinfo");t.textContent="Carregando previsão…";
+ try{const f=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.latitude}&longitude=${c.longitude}&current=temperature_2m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=7`)).json();
   const data={};f.daily.time.forEach((k,i)=>data[k]={tmax:Math.round(f.daily.temperature_2m_max[i]),tmin:Math.round(f.daily.temperature_2m_min[i]),rain:+(f.daily.precipitation_sum[i]||0).toFixed(1),prob:f.daily.precipitation_probability_max[i]||0,wind:Math.round(f.daily.wind_speed_10m_max[i])});
-  const alt=c.name.toLowerCase()!==name.toLowerCase();W={city:(alt?name:c.name)+(c.admin1?" - "+c.admin1:""),data};
+  const alt=norm(c.name)!==norm(name);W={city:(alt?name:c.name)+" - "+c.admin1,adm:c.admin1,data};
   t.innerHTML=`<b>${W.city}</b>${alt?` <small>(no mapa consta como ${c.name})</small>`:""} · agora ${Math.round(f.current.temperature_2m)}°C, umidade ${f.current.relative_humidity_2m}%`;
-  try{localStorage.setItem("cidade2",name);localStorage.setItem("clima2",JSON.stringify({q:name.toLowerCase(),city:W.city,data:W.data,ts:Date.now()}))}catch(e){}
- }catch(e){if(!useSaved(name)){W=null;t.innerHTML=`<small>${navigator.onLine?"Não encontrei essa cidade ou o serviço de clima está indisponível. Confira o nome e tente de novo.":"Sem internet no momento. Conecte-se para ver o clima de hoje."}</small>`}}
+  try{localStorage.setItem("cidade2",name);localStorage.setItem("clima2",JSON.stringify({q:name.toLowerCase(),city:W.city,adm:c.admin1,data,ts:Date.now()}))}catch(e){}
+ }catch(e){if(!useSaved(name)){W=null;t.innerHTML=`<small>${MSG()}</small>`}}
  mode="dia";sel=new Date();cur=new Date();render();}
+$("tinfo").addEventListener("click",e=>{const k=e.target.dataset.pick;if(k!==undefined)loadPlace(CAND[k],$("cid").value.trim())});
 $("bc").onclick=()=>{const v=$("cid").value.trim();if(v)loadCity(v)};
 $("cid").onkeydown=e=>{if(e.key==="Enter")$("bc").click()};
 
@@ -199,7 +212,7 @@ let CFG=Object.assign(clone(DEF),(()=>{try{return JSON.parse(localStorage.getIte
 const saveCfg=()=>{try{localStorage.setItem("cfgHorta2",JSON.stringify(CFG))}catch(e){}};
 const MOONBASE=clone(LUA);
 function applyCfg(){Object.assign(LUA,MOONBASE,CFG.moons);document.documentElement.dataset.theme=CFG.tema=="auto"?"":CFG.tema}
-const syncTop=()=>{$("reg").value=CFG.reg;$("env").value=CFG.env;$("moon").checked=CFG.moon};
+const syncTop=()=>{$("reg").value=CFG.reg;$("env").value=CFG.env;$("moon").checked=CFG.moon;$("cid").placeholder="Cidade da região: "+REG[CFG.reg].nome};
 function allV(){const R=REG[CFG.reg]||REG.mgne;return V.concat(CFG.extra).map(v=>{v.m=CFG.meses[v.n]||R[v.t]||R.quente;return v})}
 const LIMD=()=>{const c=(REG[CFG.reg]||REG.mgne).calor||[32,36];return {chuva:10,chuvaMax:20,vento:25,ventoMax:40,frio:5,frioMax:2,calor:c[0],calorMax:c[1]}};
 const LIM=()=>Object.assign(LIMD(),CFG.lim);
@@ -235,8 +248,8 @@ $("view").addEventListener("click",e=>{const t=e.target,d=t.dataset;
  saveCfg();applyCfg();syncTop();render()});
 syncTop();applyCfg();
 
-function useSaved(name){try{const s=JSON.parse(localStorage.getItem("clima2"));if(!s||s.q!==name.toLowerCase())return false;
- W={city:s.city,data:s.data};$("tinfo").innerHTML=`<b>${s.city}</b> <small>· dados salvos em ${new Date(s.ts).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})} (sem conexão)</small>`;return true}catch(e){return false}}
+function useSaved(name){try{const s=JSON.parse(localStorage.getItem("clima2"));if(!s||s.q!==name.toLowerCase()||(s.adm&&!inReg(s.adm)))return false;
+ W={city:s.city,adm:s.adm,data:s.data};$("tinfo").innerHTML=`<b>${s.city}</b> <small>· dados salvos em ${new Date(s.ts).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})} (sem conexão)</small>`;return true}catch(e){return false}}
 const net=()=>{$("off").hidden=navigator.onLine};addEventListener("online",net);addEventListener("offline",net);net();
 if("serviceWorker" in navigator)navigator.serviceWorker.ready.then(()=>{$("ready").textContent=" · ✓ pronto para usar sem internet"}).catch(()=>{});
 let DP;addEventListener("beforeinstallprompt",e=>{e.preventDefault();DP=e;$("inst").hidden=false});
