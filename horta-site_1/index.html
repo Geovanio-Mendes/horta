@@ -87,14 +87,55 @@ button{touch-action:manipulation}button:active{transform:scale(.96)}
 @keyframes slr{from{transform:translateX(-100%)}}
 .dw h4{margin:14px 0 4px;font-size:.75rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
 .dw button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 8px;border-radius:10px;font-size:1rem}.dw button:active{background:var(--ac2)}
+
+:root{--bg:#F4EEDF;--card:#FBF7EC;--tx:#2B3326;--mut:#7A7F6B;--ac:#6F8F6B;--ac2:#E4ECDD;--bd:#E6DDC9;--warn:#F6E1D0;--terra:#D98B66;--red:#D66B6B;--blue:#8CC4E6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1D231B;--card:#262E23;--tx:#EEEBDD;--mut:#A3A895;--ac:#9DBB8F;--ac2:#33402F;--bd:#3A4535;--warn:#4A3427;--terra:#E39A77;--red:#E07F7F;--blue:#7FB6D8}}
+:root[data-theme="dark"]{--bg:#1D231B;--card:#262E23;--tx:#EEEBDD;--mut:#A3A895;--ac:#9DBB8F;--ac2:#33402F;--bd:#3A4535;--warn:#4A3427;--terra:#E39A77;--red:#E07F7F;--blue:#7FB6D8}
+body{font-family:ui-rounded,"SF Pro Rounded",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{padding-bottom:100px}
+.card{border:0;border-radius:22px;box-shadow:0 4px 18px rgba(70,55,30,.08);padding:14px}
+button,select,input[type=text],input[type=number],input[type=date],textarea{border-radius:14px}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+#tabs,.locbar,.leg{display:none!important}
+.sec{font-weight:700;margin:16px 4px 8px;display:flex;gap:6px;align-items:baseline}.sec small{color:var(--mut)}
+.hero2{background:linear-gradient(140deg,#8FAA88,#566F54);color:#fff;border-radius:30px;padding:18px;margin-bottom:12px;box-shadow:0 8px 24px rgba(70,90,60,.25)}
+.hr1{display:flex;justify-content:space-between;align-items:center}.hr2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.chip2{display:block;background:rgba(255,255,255,.22);color:#fff;border:0;border-radius:99px;padding:6px 12px;margin:6px 0;font-size:.85rem;min-height:0}
+.temp{font-size:3.2rem;font-weight:700;line-height:1}.temp small{font-size:.9rem;font-weight:500;opacity:.9}
+.moonc{width:92px;height:92px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.moonc span{font-size:2.5rem;line-height:1}.moonc small{font-size:.68rem}
+.blue{background:rgba(140,196,230,.3);padding:6px 10px;border-radius:99px;font-size:.85rem}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:7px 14px;border-radius:99px;font-weight:700;font-size:.9rem;color:var(--tx)}
+.pill.g{background:color-mix(in srgb,var(--ac) 30%,var(--card))}.pill.a{background:color-mix(in srgb,var(--terra) 34%,var(--card))}.pill.r{background:color-mix(in srgb,var(--red) 34%,var(--card))}.pill.n{background:var(--bd)}
+.sh4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+.sh4 button{border:0;background:var(--card);border-radius:22px;padding:12px 2px;box-shadow:0 4px 14px rgba(70,55,30,.08);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.72rem}.sh4 span{font-size:1.6rem}
+.card0{background:var(--card);border-radius:22px;padding:12px;box-shadow:0 4px 18px rgba(70,55,30,.08)}
+.eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-top:8px}
+.tile{background:var(--ac2);border-radius:18px;padding:10px 4px;text-align:center;cursor:pointer}.tile span{font-size:1.8rem;display:block}.tile small{font-size:.72rem}.tile.bad{background:var(--warn);outline:2px solid var(--terra)}
+.mh{flex:0 0 124px;background:var(--card);border-radius:20px;padding:10px;border-left:5px solid var(--ac);cursor:pointer;box-shadow:0 4px 14px rgba(70,55,30,.08)}.mh.al{border-color:var(--terra)}.mh.ri{border-color:var(--red)}.mh span{font-size:1.6rem;display:block}.mh b{font-size:.85rem;display:block}.mh small{color:var(--mut)}
+.sa .hd{display:flex;justify-content:space-between;align-items:baseline}.sa .big{font-size:1.8rem;font-weight:700;color:var(--ac)}
+.hb{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--bd);margin:8px 0}.hb i{display:block;height:100%}.hb .g,.lg2 .g{background:var(--ac)}.hb .a,.lg2 .a{background:var(--terra)}.hb .r,.lg2 .r{background:var(--red)}
+.lg2{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem}.lg2 i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+.pc{border-left:6px solid var(--ac)}.pc.al{border-color:var(--terra)}.pc.ri{border-color:var(--red)}
+.dotS{width:12px;height:12px;border-radius:50%;background:var(--ac)}.dotS.al{background:var(--terra)}.dotS.ri{background:var(--red)}
+.tl{display:flex;justify-content:space-between;position:relative;margin:14px 0 6px}.tl::before{content:"";position:absolute;top:22px;left:12%;right:12%;height:3px;background:var(--bd)}
+.st{flex:1;text-align:center;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}.st small{font-size:.68rem;color:var(--mut)}
+.nd{width:44px;height:44px;border-radius:50%;border:3px solid var(--bd);background:var(--card);font-size:1.3rem;padding:0;min-height:0}
+.st.ok .nd{background:var(--ac);border-color:var(--ac)}.st.nx .nd{border-color:var(--terra);background:var(--warn)}
+.ph{display:flex;align-items:center;justify-content:center;margin-top:4px;min-height:30px}
+.ph img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--card);margin-left:-10px;cursor:pointer}.ph img:first-child{margin-left:0}
+.cam{width:30px;height:30px;border-radius:50%;background:var(--ac2);display:grid;place-items:center;font-size:.85rem;margin-left:4px;cursor:pointer}
+.act{display:flex;gap:8px;justify-content:flex-end}.act button{padding:4px 12px;min-height:34px}
+.empty{text-align:center;padding:28px}.empty span{font-size:2.6rem;display:block}.empty small{display:block;color:var(--mut)}
+#fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:2rem;line-height:1;box-shadow:0 8px 22px rgba(70,90,60,.4);z-index:40;padding:0}#fab[hidden]{display:none}
+details.card summary{cursor:pointer}
 </style>
 </head>
 <body>
 <main>
-<header class="top"><button id="menu" aria-label="Abrir menu">☰</button><h1>🌱 Calendário da Horta</h1><span class="fs"><button data-fs="-1" aria-label="Diminuir letra">A−</button><button data-fs="1" aria-label="Aumentar letra">A+</button></span></header>
+<header class="top"><button id="menu" aria-label="Abrir menu">☰</button><button id="home" aria-label="Início" hidden>🏠</button><h1>🌱 Calendário da Horta</h1><span class="fs"><button data-fs="-1" aria-label="Diminuir letra">A−</button><button data-fs="1" aria-label="Aumentar letra">A+</button></span></header>
 <div id="off" class="off" hidden>📴 Você está sem internet. O calendário e as suas configurações funcionam normalmente; só o clima do dia pode estar desatualizado.</div>
 <div id="ios" class="off" hidden>No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início" para instalar.</div>
-<div class="sub">Épocas de plantio, clima e fase da lua por região do Brasil<span id="ready"></span> <button id="inst" hidden>📲 Instalar app</button></div>
+<div class="sub"><span id="ready"></span> <button id="inst" hidden>📲 Instalar app</button></div>
 <div class="bar" id="tabs"></div>
 <div class="locbar"><button id="chip" class="chip">📍 <span id="chiptxt"></span> ▾</button></div>
 <div id="loc" hidden><div class="bk"></div><div class="sh"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:1.1rem">📍 Local e clima</b><button id="locx">Concluir</button></div>
@@ -112,8 +153,9 @@ button{touch-action:manipulation}button:active{transform:scale(.96)}
 <div class="leg">Regra tradicional usada: folhas → lua nova/crescente · frutos → crescente/cheia · flores → crescente · raízes, bulbos e tubérculos → minguante. É uma tradição agrícola popular; a época (mês) é o que mais pesa no resultado.</div>
 <div class="leg">Previsão do tempo: Open-Meteo. As épocas de plantio são referências gerais por região; confirme com a extensão rural (Emater) da sua área.</div>
 </main>
+<button id="fab" aria-label="Registrar plantio" hidden>＋</button>
 <div id="drawer" hidden><div class="bk"></div><nav class="dw"><b style="font-size:1.1rem">🌱 Menu</b>
-<h4>Principal</h4><button data-go="painel">🏠 Painel</button><button data-go="horta">🧺 Minha horta</button>
+<h4>Principal</h4><button data-go="painel">🏠 Painel</button><button data-go="horta">🧺 Minha horta</button><button data-go="dicas">💡 Recomendações</button>
 <h4>Calendário</h4><button data-go="dia">📅 Dia</button><button data-go="semana">🗓️ Semana</button><button data-go="mes">📆 Mês</button><button data-go="ano">🌾 Ano</button>
 <h4>Local</h4><button data-loc>📍 Local e clima</button>
 <h4>Configurações</h4><button data-sec="s-apar">🎨 Aparência e letra</button><button data-sec="s-lim">🌦️ Limites do tempo</button><button data-sec="s-lua">🌙 Lua por grupo</button><button data-sec="s-veg">🥬 Minhas hortaliças</button><button data-sec="s-bkp">💾 Backup</button>
@@ -165,25 +207,29 @@ const $=id=>document.getElementById(id);
 const env=()=>$("env").value;
 let PC=null;const pool=()=>PC||(PC=allV().filter(v=>!CFG.off.includes(v.n)&&(!env()||v.a.includes(env()))));
 const same=(a,b)=>a.toDateString()===b.toDateString();
-function tags(list,cls){return list.map(v=>`<span class="tag ${cls||""}" data-vn="${v.n}">${v.n}</span>`).join("")||"<small>nada</small>";}
+function tags(list,cls){return list.map(v=>`<span class="tag ${cls||""}" data-vn="${v.n}">${emo(v.n)} ${v.n}</span>`).join("")||"<small>nada</small>";}
 function plan(d){const L=lua(d),mm=d.getMonth()+1;
  const ep=pool().filter(v=>v.m.includes(mm));
  if(!$("moon").checked)return {L,ok:ep,wait:[]};
  return {L,ok:ep.filter(v=>LUA[v.g].includes(L.f)),wait:ep.filter(v=>!LUA[v.g].includes(L.f))};}
 function nextIdeal(v,d){for(let i=1;i<=120;i++){const x=new Date(d);x.setDate(x.getDate()+i);if(v.m.includes(x.getMonth()+1)&&LUA[v.g].includes(lua(x).f))return x}return null}
 function waitList(list,d){return list.map(v=>{const n=nextIdeal(v,d);return `<span class="tag w">${v.n}${n?` → ${n.getDate()}/${n.getMonth()+1} ${lua(n).icon}`:""}</span>`}).join("")||"<small>nada</small>"}
-function dayCard(d){const p=plan(d);
- return `<div class="card"><div class="wk"><span class="m" style="font-size:2rem">${p.L.icon}</span><div><b>${DS[d.getDay()]}, ${d.getDate()} de ${MES[d.getMonth()]} de ${d.getFullYear()}</b><br><small>Lua ${FASE[p.L.f]} · ${p.L.age.toFixed(1)} dias</small></div></div>
- ${verdict(d)}<p><b>${$("moon").checked?"Plantar hoje (época + lua ideais)":"Plantar hoje (época ideal)"}</b><br>${okTags(p.ok,d)}</p>
- ${$("moon").checked?`<p><b>${p.ok.length?"Época boa, mas a lua não é a ideal":"Hoje nenhuma tem época e lua ideais. Época boa, com a próxima data ideal"}</b><br>${waitList(p.wait,d)}</p>`:""}
- ${p.ok.length?`<hr style="border:0;border-top:1px solid var(--bd)">`+p.ok.map(v=>`<p><b>${v.n}</b> <small>(${GRUPO[v.g]} · ciclo ${v.c})</small><br>Variedades: ${v.v}<br>Meses nesta região: ${v.m.map(x=>MES[x-1].slice(0,3)).join(", ")}<br>Ambientes: ${v.a.join(", ")}${(MAN[v.n]||{}).e?`<br>Espaçamento: ${MAN[v.n].e}`:""}</p>`).join(""):""}</div>`;}
+const EM={"Alface":"🥬","Couve":"🥬","Rúcula":"🌿","Espinafre":"🥬","Salsa e cebolinha":"🌿","Brócolis":"🥦","Tomate":"🍅","Pimentão":"🫑","Pepino":"🥒","Abobrinha":"🥒","Vagem":"🌱","Quiabo":"🌿","Cenoura":"🥕","Beterraba":"🟣","Rabanete":"🔴","Cebola":"🧅","Alho":"🧄","Batata-doce":"🍠","Jiló":"🍆","Maxixe":"🥒"};
+const emo=n=>EM[n]||"🌱";
+const pill=l=>l<0?`<span class="pill n">Sem previsão</span>`:`<span class="pill ${["g","a","r"][l]}">${["✅ Bom dia","⚠️ Atenção","⛔ Adiar"][l]}</span>`;
+const tiles=(list,d)=>{const w=d&&wd(d);return list.length?`<div class="eg">${list.map(v=>{const r=TR[v.t],bad=w&&(w.tmax>r[1]||w.tmin<r[0]);return `<div class="tile ${bad?"bad":""}" data-vn="${v.n}"><span>${emo(v.n)}</span><small>${v.n}</small></div>`}).join("")}</div>`:`<br><small>Nada nesta época</small>`};
+function dayCard(d){const p=plan(d),l=lvl(d);
+ return `<div class="card"><div class="wk"><span class="m" style="font-size:2.4rem">${p.L.icon}</span><div style="flex:1"><b>${DS[d.getDay()]}, ${d.getDate()} de ${MES[d.getMonth()]}</b><br><small>Lua ${FASE[p.L.f]}</small></div>${pill(l)}</div></div>
+<div class="card"><b>🌱 Plantar</b> <small>(${p.ok.length})</small>${tiles(p.ok,d)}</div>
+${$("moon").checked&&p.wait.length?`<div class="card"><b>🌙 Esperar a lua</b><br>${p.wait.map(v=>{const n=nextIdeal(v,d);return `<span class="tag w" data-vn="${v.n}">${emo(v.n)} ${v.n}${n?` → ${n.getDate()}/${n.getMonth()+1}`:""}</span>`}).join("")}</div>`:""}`}
 function render(){PC=null;
  const TB={painel:["🏠","Painel"],cal:["📅","Calendário"],horta:["🧺","Horta"],cfg:["⚙️","Config"]};
- if(!$("tabs").children.length)$("tabs").innerHTML=Object.keys(TB).map(m=>`<button data-m="${m}"><span>${TB[m][0]}</span>${TB[m][1]}</button>`).join("");
+ 
  setOn();
  const v=$("view");const R=REG[$("reg").value];$("clima").innerHTML=`<b>${R.nome}</b><br>${R.clima}<br><small>Dica: ${R.dica}</small>`;
  document.querySelector(".nav").hidden=!CALM.includes(mode);chipTxt();
  if(mode=="horta"){$("title").textContent="Minha horta";v.innerHTML=hortaPage();return}
+ if(mode=="dicas"){$("title").textContent="Recomendações";v.innerHTML=dicasPage();return}
  if(mode=="ajuda"){$("title").textContent="Ajuda";v.innerHTML=ajudaPage();return}
  if(mode=="painel"){$("title").textContent="Hoje";v.innerHTML=painelHTML();return}
  if(mode=="cfg"){$("title").textContent="Configurações";v.innerHTML=cfgHTML();return}
@@ -214,7 +260,7 @@ let W=null;
 const key=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const TR={frio:[5,30],frioForte:[3,27],quente:[13,38],solanacea:[10,34],todo:[5,35]};
 const wd=d=>W&&W.data[key(d)];
-function okTags(list,d){const w=wd(d);return list.map(v=>{const r=TR[v.t],bad=w&&(w.tmax>r[1]||w.tmin<r[0]);return `<span class="tag ${bad?"w":""}" data-vn="${v.n}">${v.n}${bad?" ⚠":""}</span>`}).join("")||"<small>nada</small>"}
+function okTags(list,d){const w=wd(d);return list.map(v=>{const r=TR[v.t],bad=w&&(w.tmax>r[1]||w.tmin<r[0]);return `<span class="tag ${bad?"w":""}" data-vn="${v.n}">${emo(v.n)} ${v.n}${bad?" ⚠":""}</span>`}).join("")||"<small>nada</small>"}
 let LV=-1;const lvl=d=>{verdict(d);return LV};
 function verdict(d){LV=-1;const w=wd(d);
  if(!w)return W?`<p><small>Sem previsão do tempo para este dia (a previsão cobre 7 dias).</small></p>`:`<p><small>Busque sua cidade acima para ver se o dia é bom para plantar.</small></p>`;
@@ -276,7 +322,7 @@ function cfgHTML(){const L=LIM();
 <div class="vg"><input type="text" id="cn" placeholder="Nome"><select id="cg">${Object.keys(GN).map(g=>`<option value="${g}">${GN[g]}</option>`).join("")}</select></div>
 <div class="vg"><input type="text" id="cm" placeholder="Meses (ex.: 3,4,5)"><input type="text" id="cv" placeholder="Variedades"></div>
 <div class="vg"><input type="text" id="ce" placeholder="Espaçamento (ex.: 30×20 cm)"><input type="text" id="cmn" placeholder="Manejo (opcional)"><button id="add">Adicionar</button></div></div>
-<div class="card" id="s-bkp"><b>Backup</b><br><small>Copie este texto para guardar suas configurações, ou cole outro para importar.</small><textarea id="cj">${JSON.stringify(CFG)}</textarea><div class="row"><button id="imp">Importar</button><button id="rst">Restaurar padrão</button></div></div>`}
+<div class="card" id="s-bkp"><b>Backup</b><br><small>Copie este texto para guardar suas configurações, ou cole outro para importar. As fotos não entram no backup.</small><textarea id="cj">${JSON.stringify(CFG)}</textarea><div class="row"><button id="imp">Importar</button><button id="rst">Restaurar padrão</button></div></div>`}
 const meses=s=>s.split(",").map(Number).filter(n=>n>=1&&n<=12);
 $("view").addEventListener("change",e=>{const t=e.target,d=t.dataset;
  if(d.lim!==undefined){const x=parseFloat(t.value);isNaN(x)?delete CFG.lim[d.lim]:CFG.lim[d.lim]=x}
@@ -296,7 +342,7 @@ $("view").addEventListener("click",e=>{const t=e.target,d=t.dataset;
 syncTop();applyCfg();
 
 const CALM=["dia","semana","mes","ano"];let LASTCAL="mes";
-function setOn(){if(CALM.includes(mode))LASTCAL=mode;[...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.m=="cal"?CALM.includes(mode):b.dataset.m==mode));[...$("seg").children].forEach(b=>b.classList.toggle("on",b.dataset.m==mode));$("seg").hidden=!CALM.includes(mode)}
+function setOn(){if(CALM.includes(mode))LASTCAL=mode;$("fab").hidden=!["painel","horta"].includes(mode);$("home").hidden=mode=="painel";[...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.m=="cal"?CALM.includes(mode):b.dataset.m==mode));[...$("seg").children].forEach(b=>b.classList.toggle("on",b.dataset.m==mode));$("seg").hidden=!CALM.includes(mode)}
 function go(m){if(m=="cal")m=LASTCAL;scrollTo(0,0);if(m==mode)return;mode=m;setOn();const vw=$("view");vw.classList.remove("anim");void vw.offsetWidth;vw.classList.add("anim");requestAnimationFrame(()=>render())}
 $("seg").onclick=e=>{const b=e.target.closest("[data-m]");if(b)go(b.dataset.m)};
 const openDr=()=>{$("drawer").hidden=false},closeDr=()=>{$("drawer").hidden=true};
@@ -307,8 +353,34 @@ addEventListener("keydown",e=>{if(e.key=="Escape"){closeDr();closeLoc();sheetEl.
 function fonte(n){CFG.fonte=n;saveCfg();applyCfg();const r=$("fonte");if(r){r.value=n;$("fv").textContent=n+"%"}}
 document.addEventListener("click",e=>{const s=e.target.dataset.fs;if(s!==undefined)fonte(s=="0"?100:Math.max(80,Math.min(150,(CFG.fonte||100)+(+s)*10)))});
 $("view").addEventListener("input",e=>{if(e.target.id=="fonte")fonte(+e.target.value)});
-function hortaPage(){const fe=(CFG.plantios||[]).filter(x=>x.ok).sort((a,b)=>(b.colhido||"").localeCompare(a.colhido||"")).slice(0,10);
- return horta()+`<div class="card"><b>✅ Colheitas feitas</b>${fe.map(x=>`<div class="pl"><b>${x.n}</b> <small>plantada em ${fmtD(dt12(x.dt))}, colhida em ${x.colhido?fmtD(dt12(x.colhido)):"—"}</small></div>`).join("")||"<br><small>Nenhuma colheita registrada ainda.</small>"}</div>`}
+const MS=[["semeou","🌰","Semeou"],["germinou","🌱","Germinou"],["transplantou","🪴","Transplantou"],["colheu","🧺","Colheu"]];
+const FOT=()=>{try{return JSON.parse(localStorage.getItem("fotos2"))||{}}catch(e){return {}}};
+const saveFot=o=>{try{localStorage.setItem("fotos2",JSON.stringify(o));return true}catch(e){alert("Sem espaço para mais fotos neste aparelho. Apague algumas fotos antigas.");return false}};
+function tl(x){const F=(FOT()[x.id]||[]).map((f,ix)=>({...f,ix})),mk=x.marcos||{},dts={semeou:x.dt,germinou:mk.germinou,transplantou:mk.transplantou,colheu:x.ok?x.colhido:null},nx=MS.findIndex(m=>!dts[m[0]]);
+ return `<div class="tl">${MS.map((m,i)=>{const dn=dts[m[0]],ph=F.filter(f=>f.m==m[0]).slice(-3);
+  return `<div class="st ${dn?"ok":i==nx?"nx":""}"><button class="nd" data-ms="${x.id}:${m[0]}" aria-label="${m[2]}">${m[1]}</button><small>${m[2]}</small><small>${dn?fmtD(dt12(dn)):"—"}</small><div class="ph">${ph.map(f=>`<img src="${f.i}" alt="foto" data-big="${x.id}:${f.ix}">`).join("")}<label class="cam">📷<input type="file" accept="image/*" hidden data-foto="${x.id}:${m[0]}"></label></div></div>`}).join("")}</div>`}
+function hortaPage(){const L=plAtivos(),fe=(CFG.plantios||[]).filter(x=>x.ok).sort((a,b)=>(b.colhido||"").localeCompare(a.colhido||"")).slice(0,10);
+ return saudeHTML(L)+(L.map(x=>`<div class="card pc ${x.s}"><div class="wk"><span style="font-size:2rem">${emo(x.n)}</span><div style="flex:1"><b>${x.n}</b>${x.nota?` <small>· ${x.nota}</small>`:""}<br><small>${x.rest>0?`colhe em ${x.rest} dias · ~${fmtD(x.f)}`:x.rest==0?"colher hoje":`pronta há ${-x.rest} dias`}</small></div><i class="dotS ${x.s}"></i></div><div class="pb"><i style="width:${x.pct}%" class="${x.rest<=0?"rd":""}"></i></div>${tl(x)}<div class="act"><button data-pg="${x.id}" class="${x.praga?"on":""}">🐛 Praga</button><button data-rm="${x.id}">🗑</button></div></div>`).join("")||`<div class="card empty"><span>🌱</span><b>Comece sua horta</b><small>Toque no + para registrar o primeiro plantio</small></div>`)
+ +(fe.length?`<div class="sec">✅ Colhidas</div>`+fe.map(x=>`<details class="card"><summary>${emo(x.n)} <b>${x.n}</b> <small>colhida em ${x.colhido?fmtD(dt12(x.colhido)):"—"}</small></summary>${tl(x)}</details>`).join(""):"")}
+function dicasPage(){const d=new Date(),m1=d.getMonth()+1,m2=m1%12+1,P=pool(),cur=P.filter(v=>v.m.includes(m1)),nxt=P.filter(v=>v.m.includes(m2)&&!v.m.includes(m1));
+ return `<div class="card"><b>💡 Para hoje</b>${verdict(d)}</div>
+<div class="card"><b>📆 Neste mês (${MES[m1-1]})</b><br>${tags(cur)}<br><br><b>➡️ Entram em ${MES[m2-1]}</b><br>${tags(nxt)}</div>
+<div class="sec">📖 Guia por hortaliça</div>${allV().filter(v=>!CFG.off.includes(v.n)).map(v=>`<details class="card"><summary>${emo(v.n)} <b>${v.n}</b> <small>${GN[v.g]||v.g} · ciclo ${v.c}</small></summary><p><b>Variedades:</b> ${v.v}</p><p><b>Meses ideais aqui:</b> ${v.m.length?v.m.map(x=>MES[x-1].slice(0,3)).join(", "):"pouco adaptada a esta região"}</p><p><b>Ambientes:</b> ${v.a.join(", ")}</p>${manejoHTML(v)}</details>`).join("")}
+<div class="card"><b>Sobre os dados</b><p><small>Previsão do tempo: Open-Meteo. Épocas e manejo são referências gerais por região do Brasil; confirme com a extensão rural da sua área. A influência da lua é uma tradição agrícola, sem comprovação científica sólida.</small></p></div>`}
+function resize(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.6))};im.src=r.result};r.readAsDataURL(file)}
+document.addEventListener("change",e=>{const t=e.target;if(!t.dataset||!t.dataset.foto||!t.files[0])return;const [id,m]=t.dataset.foto.split(":");
+ resize(t.files[0],img=>{const o=FOT();(o[id]=o[id]||[]).push({m,d:key(new Date()),i:img});if(o[id].length>12)o[id].shift();if(!saveFot(o))return;
+  const x=CFG.plantios.find(p=>p.id==id);if(x&&m!="semeou"){x.marcos=x.marcos||{};if(m=="colheu"){if(!x.ok){x.ok=true;x.colhido=key(new Date())}}else if(!x.marcos[m])x.marcos[m]=key(new Date());saveCfg()}render()})});
+document.addEventListener("click",e=>{const t=e.target,d=t.dataset||{};
+ const ms=t.closest("[data-ms]");
+ if(ms){const [id,k]=ms.dataset.ms.split(":"),x=CFG.plantios.find(p=>p.id==id);if(!x||k=="semeou")return;x.marcos=x.marcos||{};const hj=key(new Date());
+  if(k=="colheu"){if(x.ok){x.ok=false;delete x.colhido}else{x.ok=true;x.colhido=hj}}else{if(x.marcos[k])delete x.marcos[k];else x.marcos[k]=hj}saveCfg();render();return}
+ if(d.pg){const x=CFG.plantios.find(p=>p.id==d.pg);if(x){x.praga=!x.praga;saveCfg();render()}return}
+ const bg=t.closest("[data-big]");
+ if(bg){const [id,ix]=bg.dataset.big.split(":"),f=(FOT()[id]||[])[+ix];if(!f)return;sheetEl.innerHTML=`<div class="bk"></div><div class="sh"><img src="${f.i}" alt="foto" style="width:100%;border-radius:16px"><p><small>${MS.find(m=>m[0]==f.m)[2]} · ${fmtD(dt12(f.d))}</small></p><button data-delfoto="${id}:${ix}" style="width:100%">🗑 Apagar foto</button><button id="sx" style="width:100%;margin-top:6px">Fechar</button></div>`;sheetEl.hidden=false;return}
+ if(d.delfoto){const [id,ix]=d.delfoto.split(":"),o=FOT();if(o[id]){o[id].splice(+ix,1);saveFot(o)}sheetEl.hidden=true;render();return}
+ const gg=t.closest("[data-go]");if(gg&&!gg.closest("#drawer"))go(gg.dataset.go)});
+$("fab").onclick=()=>formPlantio("");$("home").onclick=()=>go("painel");
 function ajudaPage(){return `<div class="card"><b>Como usar</b>
 <p>🏠 <b>Painel:</b> o resumo de hoje: clima, lua, o que plantar e os próximos 7 dias.</p>
 <p>📅 <b>Calendário:</b> veja por dia, semana, mês ou ano o que plantar na sua região.</p>
@@ -316,7 +388,7 @@ function ajudaPage(){return `<div class="card"><b>Como usar</b>
 <p>📍 <b>Local e clima:</b> escolha a região, o ambiente e a sua cidade (toque na linha do topo ou no menu).</p>
 <p>⚙️ <b>Config:</b> tema, tamanho da letra, limites do tempo, lua, hortaliças e backup.</p>
 <p>🔠 Use <b>A−</b> e <b>A+</b> no topo para mudar o tamanho da letra a qualquer momento.</p></div>
-<div class="card"><b>Sobre</b><p>Calendário da Horta · versão 7. Previsão do tempo: Open-Meteo. As épocas e o manejo são referências gerais por região do Brasil; confirme com a extensão rural da sua área. A influência da lua é uma tradição agrícola, sem comprovação científica sólida.</p><p>Seus dados (configurações e plantios) ficam salvos somente neste aparelho. Use o Backup nas configurações para guardá-los.</p></div>`}
+<div class="card"><b>Sobre</b><p>Calendário da Horta · versão 8. Previsão do tempo: Open-Meteo. As épocas e o manejo são referências gerais por região do Brasil; confirme com a extensão rural da sua área. A influência da lua é uma tradição agrícola, sem comprovação científica sólida.</p><p>Seus dados (configurações e plantios) ficam salvos somente neste aparelho. Use o Backup nas configurações para guardá-los.</p></div>`}
 
 const chipTxt=()=>{$("chiptxt").textContent=(W?W.city.split(" - ")[0]:"Escolher cidade")+" · "+REG[CFG.reg].nome.split(" (")[0]+(CFG.env?" · "+CFG.env:"")+(CFG.moon?" · 🌙":"")};
 const openLoc=()=>{$("loc").hidden=false},closeLoc=()=>{$("loc").hidden=true};
@@ -369,18 +441,22 @@ document.addEventListener("click",e=>{const t=e.target,d=t.dataset;
  else if(d.done){const x=CFG.plantios.find(p=>p.id==d.done);if(x){x.ok=true;x.colhido=key(new Date());saveCfg();render()}}
  else if(d.rm){if(confirm("Apagar este registro?")){CFG.plantios=CFG.plantios.filter(p=>p.id!=d.rm);saveCfg();render()}}});
 
-function painelHTML(){const d=new Date(),p=plan(d),w=wd(d),hr=d.getHours(),g=hr<12?"Bom dia":hr<18?"Boa tarde":"Boa noite";
- const m1=d.getMonth()+1,m2=m1%12+1,P=pool(),cur=P.filter(v=>v.m.includes(m1)),nxt=P.filter(v=>v.m.includes(m2)&&!v.m.includes(m1));
- const days=[...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);const q=plan(x),y=wd(x),l=y?lvl(x):-1;
-  return `<div class="sc" data-d="${x.toISOString()}"><small>${i?DS[x.getDay()]:"Hoje"}</small><b>${x.getDate()}</b><span>${q.L.icon}</span>${y?`<small>${y.tmax}°/${y.tmin}°</small><div class="rb"><i style="height:${Math.min(100,y.rain*6)}%"></i></div><small>${y.rain} mm</small>`:`<small>—</small>`}<i class="dot l${l<0?"n":l}"></i></div>`}).join("");
- return `<div class="hero"><div style="display:flex;justify-content:space-between;align-items:center"><div><small>${g}!</small><div style="font-size:1.15rem;font-weight:600">${DS[d.getDay()]}, ${d.getDate()} de ${MES[d.getMonth()]}</div></div><span style="font-size:2.6rem">${p.L.icon}</span></div>
-<div style="margin-top:6px">Lua ${FASE[p.L.f]} · ${W?W.city+" · "+(w?w.tmin+"° a "+w.tmax+"°C":"sem previsão"):"busque sua cidade para ver o clima"}</div>${W?`<button data-rf>↻ Atualizar clima</button>`:`<button data-loc>📍 Escolher cidade</button>`}</div>
-${verdict(d)}
-<div class="card"><b>🌱 Plantar agora</b> <small>(${p.ok.length})</small><br>${okTags(p.ok,d)}<br><small>Toque em uma hortaliça para ver os detalhes.</small></div>
-${horta()}
-<b>Próximos 7 dias</b><div class="strip">${days}</div>
-<div class="leg" style="margin:0 0 10px">Bolinha: verde = bom, amarelo = atenção, vermelho = adiar, cinza = sem previsão. Barra azul = chuva prevista.</div>
-<div class="card"><b>📅 Planejar</b><br><small>Neste mês (${MES[m1-1]}):</small><br>${tags(cur)}<br><small>Entram em ${MES[m2-1]}:</small><br>${tags(nxt)}</div>`}
+function plAtivos(){const hoje=new Date();hoje.setHours(12,0,0,0);const wt=wd(new Date()),A=allV();
+ return (CFG.plantios||[]).filter(x=>!x.ok).map(x=>{x.marcos=x.marcos||{};const p=dt12(x.dt),f=new Date(p);f.setDate(f.getDate()+x.dias);const rest=Math.round((f-hoje)/864e5),dec=Math.round((hoje-p)/864e5),v=A.find(z=>z.n==x.n),r=v&&TR[v.t],temp=!!(wt&&r&&(wt.tmax>r[1]||wt.tmin<r[0]));
+  const s=(x.praga||rest<-10)?"ri":(rest<=0||temp)?"al":"ok";return {...x,p,f,rest,s,temp,pct:Math.max(0,Math.min(100,dec/x.dias*100))}}).sort((a,b)=>a.rest-b.rest)}
+function saudeHTML(L){const n=L.length;if(!n)return `<div class="card sa"><b>Saúde do canteiro</b><div class="hb"></div><small style="color:var(--mut)">Registre um plantio para acompanhar</small></div>`;
+ const c={ok:0,al:0,ri:0};L.forEach(x=>c[x.s]++);const po=Math.round(c.ok/n*100),pa=Math.round(c.al/n*100);
+ return `<div class="card sa"><div class="hd"><b>Saúde do canteiro</b><span class="big">${po}%</span></div><div class="hb"><i class="g" style="width:${po}%"></i><i class="a" style="width:${pa}%"></i><i class="r" style="width:${Math.max(0,100-po-pa)}%"></i></div><div class="lg2"><span><i class="g"></i>${c.ok} saudáveis</span><span><i class="a"></i>${c.al} atenção</span><span><i class="r"></i>${c.ri} em risco</span></div></div>`}
+function painelHTML(){const d=new Date(),p=plan(d),w=wd(d),l=w?lvl(d):-1,hr=d.getHours(),g=hr<12?"Bom dia":hr<18?"Boa tarde":"Boa noite",L=plAtivos();
+ const days=[...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);const q=plan(x),y=wd(x),k=y?lvl(x):-1;
+  return `<div class="sc" data-d="${x.toISOString()}"><small>${i?DS[x.getDay()]:"Hoje"}</small><b>${x.getDate()}</b><span>${q.L.icon}</span>${y?`<small>${y.tmax}°</small><div class="rb"><i style="height:${Math.min(100,y.rain*6)}%"></i></div>`:`<small>—</small>`}<i class="dot l${k<0?"n":k}"></i></div>`}).join("");
+ return `<div class="hero2"><div class="hr1"><div><small>${g}</small><button class="chip2" data-loc>📍 ${W?W.city.split(" - ")[0]:"Escolher cidade"} ▾</button><div class="temp">${w?w.tmax+"°":"--"}<small> ${w?w.tmin+"° mín":""}</small></div></div><div class="moonc"><span>${p.L.icon}</span><small>${FASE[p.L.f]}</small></div></div>
+<div class="hr2">${pill(l)}${w?`<span class="blue">💧 ${w.rain} mm</span><span class="blue">💨 ${w.wind} km/h</span>`:""}</div></div>
+<div class="sh4"><button data-go="cal"><span>📅</span>Calendário</button><button data-go="horta"><span>🧺</span>Horta</button><button data-go="dicas"><span>💡</span>Dicas</button><button data-go="cfg"><span>⚙️</span>Config</button></div>
+${saudeHTML(L)}
+<div class="sec">🌱 Plantar agora <small>${p.ok.length}</small></div><div class="card0">${tiles(p.ok,d)}</div>
+${L.length?`<div class="sec">🧺 Minha horta</div><div class="strip">${L.map(x=>`<div class="mh ${x.s}" data-go="horta"><span>${emo(x.n)}</span><b>${x.n}</b><div class="pb"><i style="width:${x.pct}%"></i></div><small>${x.rest>0?x.rest+" dias":"colher!"}</small></div>`).join("")}</div>`:""}
+<div class="sec">📆 Próximos dias</div><div class="strip">${days}</div>`}
 const sheetEl=document.createElement("div");sheetEl.id="sheet";sheetEl.hidden=true;document.body.appendChild(sheetEl);
 function openSheet(n){const v=allV().find(x=>x.n==n);if(!v)return;
  sheetEl.innerHTML=`<div class="bk"></div><div class="sh"><b style="font-size:1.15rem">${v.n}</b> <small>(${GN[v.g]||v.g} · ciclo ${v.c})</small><p><b>Variedades:</b> ${v.v}</p><p><b>Meses ideais aqui:</b> ${v.m.length?v.m.map(x=>MES[x-1].slice(0,3)).join(", "):"pouco adaptada a esta região"}</p><p><b>Ambientes:</b> ${v.a.join(", ")}</p>${manejoHTML(v)}<button data-reg="${v.n}" style="width:100%;margin-bottom:8px">🌱 Registrar plantio</button><p><b>Luas (tradição):</b> ${LUA[v.g].map(i=>FASE[i]).join(", ")||"—"}</p><button id="sx" style="width:100%">Fechar</button></div>`;sheetEl.hidden=false}
