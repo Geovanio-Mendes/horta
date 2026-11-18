@@ -50,7 +50,7 @@ input[type=number],input[type=date],textarea{font:inherit;padding:5px 8px;border
 body{-webkit-tap-highlight-color:transparent}
 @media (max-width:600px){
 main{padding:10px 10px 90px}h1{font-size:1.15rem}
-input,select,textarea{font-size:16px}button,select,input[type=text],input[type=number]{min-height:40px}
+input,select,textarea{font-size:max(16px,1rem)}button,select,input[type=text],input[type=number]{min-height:40px}
 #tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;margin:0;gap:4px;flex-wrap:nowrap;background:var(--card);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
 #tabs button{flex:1;padding:10px 2px;font-size:.78rem;border-radius:10px}
 .d{min-height:50px;padding:2px;font-size:.68rem}.d .m{font-size:.95rem}
@@ -79,11 +79,19 @@ button{touch-action:manipulation}button:active{transform:scale(.96)}
 #tabs button span{pointer-events:none}#tabs button{min-height:52px}
 .locbar{margin-bottom:8px}.chip{width:100%;text-align:left;border-radius:12px;padding:10px 14px;font-size:.95rem}
 #loc{position:fixed;inset:0;z-index:50}.sh .bar{margin-bottom:10px}
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;background:var(--bg);padding:6px 0;margin-bottom:4px}
+.top h1{flex:1;margin:0;font-size:1.15rem}#menu{font-size:1.3rem;padding:2px 12px}.fs{display:flex;gap:4px}.fs button{padding:4px 9px}
+.seg{display:flex;gap:4px;margin-bottom:10px}.seg[hidden]{display:none}.seg button{flex:1;padding:8px 2px;border-radius:10px}
+#drawer{position:fixed;inset:0;z-index:60}#drawer[hidden]{display:none}
+.dw{position:absolute;top:0;bottom:0;left:0;width:min(82vw,320px);background:var(--card);color:var(--tx);padding:calc(16px + env(safe-area-inset-top,0px)) 14px 16px;overflow:auto;box-shadow:2px 0 16px rgba(0,0,0,.35);animation:slr .22s ease}
+@keyframes slr{from{transform:translateX(-100%)}}
+.dw h4{margin:14px 0 4px;font-size:.75rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+.dw button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 8px;border-radius:10px;font-size:1rem}.dw button:active{background:var(--ac2)}
 </style>
 </head>
 <body>
 <main>
-<h1>🌱 Calendário da Horta</h1>
+<header class="top"><button id="menu" aria-label="Abrir menu">☰</button><h1>🌱 Calendário da Horta</h1><span class="fs"><button data-fs="-1" aria-label="Diminuir letra">A−</button><button data-fs="1" aria-label="Aumentar letra">A+</button></span></header>
 <div id="off" class="off" hidden>📴 Você está sem internet. O calendário e as suas configurações funcionam normalmente; só o clima do dia pode estar desatualizado.</div>
 <div id="ios" class="off" hidden>No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início" para instalar.</div>
 <div class="sub">Épocas de plantio, clima e fase da lua por região do Brasil<span id="ready"></span> <button id="inst" hidden>📲 Instalar app</button></div>
@@ -98,11 +106,18 @@ button{touch-action:manipulation}button:active{transform:scale(.96)}
 <div id="clima" class="card"></div>
 <div id="tempo" class="card"><div class="row"><input type="text" id="cid" placeholder="Digite sua cidade (ex.: Belo Horizonte)"><button id="bc">Ver clima</button></div><div id="tinfo"><small>Busque sua cidade para ver o clima e saber se o dia é bom para plantar.</small></div></div>
 </div></div>
+<div id="seg" class="seg" hidden><button data-m="dia">Dia</button><button data-m="semana">Semana</button><button data-m="mes">Mês</button><button data-m="ano">Ano</button></div>
 <div class="nav"><button id="prev">◀</button><b id="title"></b><button id="next">▶</button><button id="today">Hoje</button></div>
 <div id="view"></div>
 <div class="leg">Regra tradicional usada: folhas → lua nova/crescente · frutos → crescente/cheia · flores → crescente · raízes, bulbos e tubérculos → minguante. É uma tradição agrícola popular; a época (mês) é o que mais pesa no resultado.</div>
 <div class="leg">Previsão do tempo: Open-Meteo. As épocas de plantio são referências gerais por região; confirme com a extensão rural (Emater) da sua área.</div>
 </main>
+<div id="drawer" hidden><div class="bk"></div><nav class="dw"><b style="font-size:1.1rem">🌱 Menu</b>
+<h4>Principal</h4><button data-go="painel">🏠 Painel</button><button data-go="horta">🧺 Minha horta</button>
+<h4>Calendário</h4><button data-go="dia">📅 Dia</button><button data-go="semana">🗓️ Semana</button><button data-go="mes">📆 Mês</button><button data-go="ano">🌾 Ano</button>
+<h4>Local</h4><button data-loc>📍 Local e clima</button>
+<h4>Configurações</h4><button data-sec="s-apar">🎨 Aparência e letra</button><button data-sec="s-lim">🌦️ Limites do tempo</button><button data-sec="s-lua">🌙 Lua por grupo</button><button data-sec="s-veg">🥬 Minhas hortaliças</button><button data-sec="s-bkp">💾 Backup</button>
+<h4>Ajuda</h4><button data-go="ajuda">❓ Como usar e sobre</button></nav></div>
 <script>
 const MES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const DS=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
@@ -163,11 +178,13 @@ function dayCard(d){const p=plan(d);
  ${$("moon").checked?`<p><b>${p.ok.length?"Época boa, mas a lua não é a ideal":"Hoje nenhuma tem época e lua ideais. Época boa, com a próxima data ideal"}</b><br>${waitList(p.wait,d)}</p>`:""}
  ${p.ok.length?`<hr style="border:0;border-top:1px solid var(--bd)">`+p.ok.map(v=>`<p><b>${v.n}</b> <small>(${GRUPO[v.g]} · ciclo ${v.c})</small><br>Variedades: ${v.v}<br>Meses nesta região: ${v.m.map(x=>MES[x-1].slice(0,3)).join(", ")}<br>Ambientes: ${v.a.join(", ")}${(MAN[v.n]||{}).e?`<br>Espaçamento: ${MAN[v.n].e}`:""}</p>`).join(""):""}</div>`;}
 function render(){PC=null;
- const TB={painel:["🏠","Painel"],dia:["📅","Dia"],semana:["🗓️","Semana"],mes:["📆","Mês"],ano:["🌾","Ano"],cfg:["⚙️","Config"]};
+ const TB={painel:["🏠","Painel"],cal:["📅","Calendário"],horta:["🧺","Horta"],cfg:["⚙️","Config"]};
  if(!$("tabs").children.length)$("tabs").innerHTML=Object.keys(TB).map(m=>`<button data-m="${m}"><span>${TB[m][0]}</span>${TB[m][1]}</button>`).join("");
- [...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.m==mode));
+ setOn();
  const v=$("view");const R=REG[$("reg").value];$("clima").innerHTML=`<b>${R.nome}</b><br>${R.clima}<br><small>Dica: ${R.dica}</small>`;
- document.querySelector(".nav").hidden=mode=="painel"||mode=="cfg";chipTxt();
+ document.querySelector(".nav").hidden=!CALM.includes(mode);chipTxt();
+ if(mode=="horta"){$("title").textContent="Minha horta";v.innerHTML=hortaPage();return}
+ if(mode=="ajuda"){$("title").textContent="Ajuda";v.innerHTML=ajudaPage();return}
  if(mode=="painel"){$("title").textContent="Hoje";v.innerHTML=painelHTML();return}
  if(mode=="cfg"){$("title").textContent="Configurações";v.innerHTML=cfgHTML();return}
  if(mode=="dia"){$("title").textContent=sel.toLocaleDateString("pt-BR",{dateStyle:"long"});v.innerHTML=dayCard(sel);}
@@ -184,7 +201,7 @@ function render(){PC=null;
  else{$("title").textContent=cur.getFullYear();
   v.innerHTML=`<div class="yr">${MES.map((M,i)=>`<div class="card"><h3>${M}</h3>${tags(pool().filter(x=>x.m.includes(i+1)))}</div>`).join("")}</div>`;}
 }
-$("tabs").onclick=e=>{const b=e.target.closest("[data-m]");if(!b||b.dataset.m==mode)return;mode=b.dataset.m;[...$("tabs").children].forEach(x=>x.classList.toggle("on",x==b));scrollTo(0,0);const vw=$("view");vw.classList.remove("anim");void vw.offsetWidth;vw.classList.add("anim");requestAnimationFrame(()=>render())};
+$("tabs").onclick=e=>{const b=e.target.closest("[data-m]");if(b)go(b.dataset.m)};
 $("view").onclick=e=>{const t=e.target.closest("[data-d]");if(t){sel=new Date(t.dataset.d);cur=new Date(sel);mode="dia";render()}};
 ["env","moon","reg"].forEach(i=>$(i).onchange=()=>{CFG.env=$("env").value;CFG.moon=$("moon").checked;CFG.reg=$("reg").value;saveCfg();syncTop();if(W&&W.adm&&!inReg(W.adm)){W=null;$("tinfo").innerHTML="<small>Você mudou a região. Busque uma cidade dessa região para ver o clima.</small>"}render()});
 $("today").onclick=()=>{cur=new Date();sel=new Date();render()};
@@ -235,12 +252,12 @@ $("tinfo").addEventListener("click",e=>{const k=e.target.dataset.pick;if(k!==und
 $("bc").onclick=()=>{const v=$("cid").value.trim();if(v)loadCity(v)};
 $("cid").onkeydown=e=>{if(e.key==="Enter")$("bc").click()};
 
-const DEF={reg:"sudeste",env:"",moon:false,tema:"auto",lim:{},off:[],meses:{},moons:{},extra:[],plantios:[]};
+const DEF={reg:"sudeste",env:"",moon:false,tema:"auto",lim:{},off:[],meses:{},moons:{},extra:[],plantios:[],fonte:100};
 const clone=o=>JSON.parse(JSON.stringify(o));
 let CFG=Object.assign(clone(DEF),(()=>{try{return JSON.parse(localStorage.getItem("cfgHorta"))||{}}catch(e){return {}}})());
 const saveCfg=()=>{try{localStorage.setItem("cfgHorta",JSON.stringify(CFG))}catch(e){}};
 const MOONBASE=clone(LUA);
-function applyCfg(){Object.assign(LUA,MOONBASE,CFG.moons);document.documentElement.dataset.theme=CFG.tema=="auto"?"":CFG.tema}
+function applyCfg(){Object.assign(LUA,MOONBASE,CFG.moons);document.documentElement.dataset.theme=CFG.tema=="auto"?"":CFG.tema;document.documentElement.style.fontSize=(CFG.fonte||100)+"%"}
 const syncTop=()=>{$("reg").value=CFG.reg;$("env").value=CFG.env;$("moon").checked=CFG.moon;$("cid").placeholder="Cidade da região: "+REG[CFG.reg].nome};
 function allV(){const R=REG[CFG.reg]||REG.mgne;return V.concat(CFG.extra).map(v=>{v.m=CFG.meses[v.n]||R[v.t]||R.quente;return v})}
 const LIMD=()=>{const c=(REG[CFG.reg]||REG.mgne).calor||[32,36];return {chuva:10,chuvaMax:20,vento:25,ventoMax:40,frio:5,frioMax:2,calor:c[0],calorMax:c[1]}};
@@ -252,14 +269,14 @@ function cfgHTML(){const L=LIM();
  const moons=Object.keys(GN).map(g=>`<div style="margin:4px 0">${GN[g]}: ${FASE.map((f,i)=>`<label><input type="checkbox" data-moon="${g}:${i}" ${LUA[g].includes(i)?"checked":""}> ${f}</label>`).join(" ")}</div>`).join("");
  const vegs=allV().map(v=>`<div class="vg"><label><input type="checkbox" data-on="${v.n}" ${CFG.off.includes(v.n)?"":"checked"}> <b>${v.n}</b></label><input type="text" data-mes="${v.n}" value="${v.m.join(",")}" placeholder="meses, ex.: 5,6,7">${v.x?`<button data-del="${v.n}">🗑</button>`:""}</div>`).join("");
  const tema=["auto","light","dark"].map(x=>`<option value="${x}" ${CFG.tema==x?"selected":""}>${{auto:"Automático",light:"Claro",dark:"Escuro"}[x]}</option>`).join("");
- return `<div class="card"><b>Aparência</b><br>Tema: <select id="tema">${tema}</select><br><small>Região, ambiente e lua ficam salvos pelos controles do topo. A cidade é lembrada ao buscar o clima.</small></div>
-<div class="card"><b>Limites do tempo (veredito do dia)</b><br><small>Apague o número para voltar ao padrão da região.</small><div class="grid2">${nums}</div></div>
-<div class="card"><b>Lua por tipo de hortaliça</b><br><small>Fases consideradas ideais para cada grupo (vale quando "Considerar a lua" está ligado).</small>${moons}</div>
-<div class="card"><b>Minhas hortaliças</b><br><small>Desmarque as que você não planta. Em meses, escreva os números separados por vírgula; apague para voltar ao padrão.</small>${vegs}<hr style="border:0;border-top:1px solid var(--bd)"><b>Adicionar hortaliça</b>
+ return `<div class="card" id="s-apar"><b>Aparência</b><br>Tema: <select id="tema">${tema}</select><br><br>Tamanho da letra: <b id="fv">${CFG.fonte||100}%</b><br><input type="range" id="fonte" min="80" max="150" step="5" value="${CFG.fonte||100}" style="width:100%"><button data-fs="0">Voltar ao tamanho padrão</button><br><br><small>Região, ambiente e lua ficam salvos pelos controles do topo. A cidade é lembrada ao buscar o clima.</small></div>
+<div class="card" id="s-lim"><b>Limites do tempo (veredito do dia)</b><br><small>Apague o número para voltar ao padrão da região.</small><div class="grid2">${nums}</div></div>
+<div class="card" id="s-lua"><b>Lua por tipo de hortaliça</b><br><small>Fases consideradas ideais para cada grupo (vale quando "Considerar a lua" está ligado).</small>${moons}</div>
+<div class="card" id="s-veg"><b>Minhas hortaliças</b><br><small>Desmarque as que você não planta. Em meses, escreva os números separados por vírgula; apague para voltar ao padrão.</small>${vegs}<hr style="border:0;border-top:1px solid var(--bd)"><b>Adicionar hortaliça</b>
 <div class="vg"><input type="text" id="cn" placeholder="Nome"><select id="cg">${Object.keys(GN).map(g=>`<option value="${g}">${GN[g]}</option>`).join("")}</select></div>
 <div class="vg"><input type="text" id="cm" placeholder="Meses (ex.: 3,4,5)"><input type="text" id="cv" placeholder="Variedades"></div>
 <div class="vg"><input type="text" id="ce" placeholder="Espaçamento (ex.: 30×20 cm)"><input type="text" id="cmn" placeholder="Manejo (opcional)"><button id="add">Adicionar</button></div></div>
-<div class="card"><b>Backup</b><br><small>Copie este texto para guardar suas configurações, ou cole outro para importar.</small><textarea id="cj">${JSON.stringify(CFG)}</textarea><div class="row"><button id="imp">Importar</button><button id="rst">Restaurar padrão</button></div></div>`}
+<div class="card" id="s-bkp"><b>Backup</b><br><small>Copie este texto para guardar suas configurações, ou cole outro para importar.</small><textarea id="cj">${JSON.stringify(CFG)}</textarea><div class="row"><button id="imp">Importar</button><button id="rst">Restaurar padrão</button></div></div>`}
 const meses=s=>s.split(",").map(Number).filter(n=>n>=1&&n<=12);
 $("view").addEventListener("change",e=>{const t=e.target,d=t.dataset;
  if(d.lim!==undefined){const x=parseFloat(t.value);isNaN(x)?delete CFG.lim[d.lim]:CFG.lim[d.lim]=x}
@@ -277,6 +294,29 @@ $("view").addEventListener("click",e=>{const t=e.target,d=t.dataset;
  else return;
  saveCfg();applyCfg();syncTop();render()});
 syncTop();applyCfg();
+
+const CALM=["dia","semana","mes","ano"];let LASTCAL="mes";
+function setOn(){if(CALM.includes(mode))LASTCAL=mode;[...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.m=="cal"?CALM.includes(mode):b.dataset.m==mode));[...$("seg").children].forEach(b=>b.classList.toggle("on",b.dataset.m==mode));$("seg").hidden=!CALM.includes(mode)}
+function go(m){if(m=="cal")m=LASTCAL;scrollTo(0,0);if(m==mode)return;mode=m;setOn();const vw=$("view");vw.classList.remove("anim");void vw.offsetWidth;vw.classList.add("anim");requestAnimationFrame(()=>render())}
+$("seg").onclick=e=>{const b=e.target.closest("[data-m]");if(b)go(b.dataset.m)};
+const openDr=()=>{$("drawer").hidden=false},closeDr=()=>{$("drawer").hidden=true};
+$("menu").onclick=openDr;
+$("drawer").onclick=e=>{if(e.target.classList.contains("bk")){closeDr();return}const b=e.target.closest("button");if(!b)return;const d=b.dataset;closeDr();
+ if(d.go)go(d.go);else if(d.sec){go("cfg");setTimeout(()=>{const s=$(d.sec);s&&s.scrollIntoView({behavior:"smooth"})},150)}};
+addEventListener("keydown",e=>{if(e.key=="Escape"){closeDr();closeLoc();sheetEl.hidden=true}});
+function fonte(n){CFG.fonte=n;saveCfg();applyCfg();const r=$("fonte");if(r){r.value=n;$("fv").textContent=n+"%"}}
+document.addEventListener("click",e=>{const s=e.target.dataset.fs;if(s!==undefined)fonte(s=="0"?100:Math.max(80,Math.min(150,(CFG.fonte||100)+(+s)*10)))});
+$("view").addEventListener("input",e=>{if(e.target.id=="fonte")fonte(+e.target.value)});
+function hortaPage(){const fe=(CFG.plantios||[]).filter(x=>x.ok).sort((a,b)=>(b.colhido||"").localeCompare(a.colhido||"")).slice(0,10);
+ return horta()+`<div class="card"><b>✅ Colheitas feitas</b>${fe.map(x=>`<div class="pl"><b>${x.n}</b> <small>plantada em ${fmtD(dt12(x.dt))}, colhida em ${x.colhido?fmtD(dt12(x.colhido)):"—"}</small></div>`).join("")||"<br><small>Nenhuma colheita registrada ainda.</small>"}</div>`}
+function ajudaPage(){return `<div class="card"><b>Como usar</b>
+<p>🏠 <b>Painel:</b> o resumo de hoje: clima, lua, o que plantar e os próximos 7 dias.</p>
+<p>📅 <b>Calendário:</b> veja por dia, semana, mês ou ano o que plantar na sua região.</p>
+<p>🧺 <b>Horta:</b> registre o que plantou e acompanhe a previsão de colheita.</p>
+<p>📍 <b>Local e clima:</b> escolha a região, o ambiente e a sua cidade (toque na linha do topo ou no menu).</p>
+<p>⚙️ <b>Config:</b> tema, tamanho da letra, limites do tempo, lua, hortaliças e backup.</p>
+<p>🔠 Use <b>A−</b> e <b>A+</b> no topo para mudar o tamanho da letra a qualquer momento.</p></div>
+<div class="card"><b>Sobre</b><p>Calendário da Horta · versão 7. Previsão do tempo: Open-Meteo. As épocas e o manejo são referências gerais por região do Brasil; confirme com a extensão rural da sua área. A influência da lua é uma tradição agrícola, sem comprovação científica sólida.</p><p>Seus dados (configurações e plantios) ficam salvos somente neste aparelho. Use o Backup nas configurações para guardá-los.</p></div>`}
 
 const chipTxt=()=>{$("chiptxt").textContent=(W?W.city.split(" - ")[0]:"Escolher cidade")+" · "+REG[CFG.reg].nome.split(" (")[0]+(CFG.env?" · "+CFG.env:"")+(CFG.moon?" · 🌙":"")};
 const openLoc=()=>{$("loc").hidden=false},closeLoc=()=>{$("loc").hidden=true};
