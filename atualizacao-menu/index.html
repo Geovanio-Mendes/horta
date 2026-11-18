@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3f7d3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Horta">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Calendário da Horta</title>
+<style>
+:root{--bg:#f6f4ec;--card:#fff;--tx:#23301f;--mut:#6b7766;--ac:#3f7d3a;--ac2:#e3efdc;--bd:#d9d6c8;--warn:#fff3d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c14;--card:#1f281c;--card:#1f281c;--tx:#e8eee4;--mut:#9aa795;--ac:#7fc279;--ac2:#273a24;--bd:#34412f;--warn:#3a3320}}
+:root[data-theme="dark"]{--bg:#161c14;--card:#1f281c;--tx:#e8eee4;--mut:#9aa795;--ac:#7fc279;--ac2:#273a24;--bd:#34412f;--warn:#3a3320}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+main{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:0 0 4px}
+.sub{color:var(--mut);font-size:.85rem;margin-bottom:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+button,select{font:inherit;padding:6px 12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;cursor:pointer}
+button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.nav{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.nav b{flex:1;text-align:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid .h{font-size:.75rem;color:var(--mut);text-align:center}
+.d{border:1px solid var(--bd);background:var(--card);border-radius:8px;min-height:62px;padding:4px;font-size:.75rem;cursor:pointer;text-align:left;display:block}
+.d .m{font-size:1.1rem}
+.d.hoje{outline:2px solid var(--ac)}
+.d.out{opacity:.3}
+.tag{display:inline-block;background:var(--ac2);border-radius:99px;padding:2px 9px;font-size:.78rem;margin:2px 4px 2px 0}
+.tag.w{background:var(--warn)}
+.yr{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.yr .card{margin:0}
+.yr h3{margin:0 0 6px;font-size:1rem}
+.wk{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.wk .m{font-size:1.6rem}
+small{color:var(--mut)}
+.leg{font-size:.78rem;color:var(--mut);margin-top:10px}
+input[type=text]{font:inherit;padding:6px 10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;min-width:0;flex:1}
+.row{display:flex;gap:8px;margin-bottom:6px}
+input[type=number],input[type=date],textarea{font:inherit;padding:5px 8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px}textarea{width:100%;min-height:80px}
+.cf{display:flex;justify-content:space-between;align-items:center;margin:4px 0;font-size:.88rem}.cf input{width:80px}
+.vg{display:flex;gap:8px;align-items:center;margin:4px 0;flex-wrap:wrap}.vg>label{width:150px;flex:none}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 24px}
+body{-webkit-tap-highlight-color:transparent}
+@media (max-width:600px){
+main{padding:10px 10px 90px}h1{font-size:1.15rem}
+input,select,textarea{font-size:max(16px,1rem)}button,select,input[type=text],input[type=number]{min-height:40px}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;margin:0;gap:4px;flex-wrap:nowrap;background:var(--card);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+#tabs button{flex:1;padding:10px 2px;font-size:.78rem;border-radius:10px}
+.d{min-height:50px;padding:2px;font-size:.68rem}.d .m{font-size:.95rem}
+.yr{grid-template-columns:1fr}.vg>label{width:100%}.nav button{padding:8px 14px}
+}
+.off{background:var(--warn);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:.88rem}
+.off[hidden],#inst[hidden]{display:none}
+#view.anim>*{animation:up .2s ease}@keyframes up{from{opacity:0;transform:translateY(6px)}}
+.nav[hidden],#clima[hidden],#sheet[hidden],#loc[hidden]{display:none}
+#tabs button span{margin-right:4px}
+.hero{background:linear-gradient(135deg,#4f9a49,#25502a);color:#fff;border-radius:18px;padding:16px;margin-bottom:10px}
+.hero button{margin-top:8px;font-size:.85rem;padding:4px 10px}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:6px 0;scroll-snap-type:x mandatory}
+.sc{flex:0 0 66px;scroll-snap-align:start;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px 4px;text-align:center;font-size:.78rem;cursor:pointer}
+.sc b{display:block;font-size:1.05rem}.sc span{display:block;font-size:1.3rem}
+.rb{height:24px;display:flex;align-items:flex-end;justify-content:center;margin:2px 0}.rb i{width:10px;background:#4a90d9;border-radius:3px 3px 0 0;min-height:2px}
+.dot{display:block;width:9px;height:9px;border-radius:50%;margin:5px auto 0}.l0{background:#3fa34d}.l1{background:#e0a21b}.l2{background:#d9453b}.ln{background:var(--bd)}
+.tag[data-vn]{cursor:pointer}
+#sheet{position:fixed;inset:0;z-index:50}.bk{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.sh{position:absolute;left:0;right:0;bottom:0;background:var(--card);color:var(--tx);border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));max-height:75vh;overflow:auto;animation:sl .25s ease}
+@keyframes sl{from{transform:translateY(100%)}}
+@media (max-width:600px){#tabs button span{display:block;margin:0;font-size:1.15rem;line-height:1.1}#tabs button{font-size:.7rem}}
+.pl{border-top:1px solid var(--bd);padding:8px 0;font-size:.9rem}.pb{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:5px 0}.pb i{display:block;height:100%;background:var(--ac)}.pb i.rd{background:#e0a21b}
+.pl button{font-size:.8rem;padding:3px 8px;min-height:32px}#sheet .sh input,#sheet .sh select{width:100%}
+button{touch-action:manipulation}button:active{transform:scale(.96)}
+#tabs button span{pointer-events:none}#tabs button{min-height:52px}
+.locbar{margin-bottom:8px}.chip{width:100%;text-align:left;border-radius:12px;padding:10px 14px;font-size:.95rem}
+#loc{position:fixed;inset:0;z-index:50}.sh .bar{margin-bottom:10px}
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;background:var(--bg);padding:6px 0;margin-bottom:4px}
+.top h1{flex:1;margin:0;font-size:1.15rem}#menu{font-size:1.3rem;padding:2px 12px}.fs{display:flex;gap:4px}.fs button{padding:4px 9px}
+.seg{display:flex;gap:4px;margin-bottom:10px}.seg[hidden]{display:none}.seg button{flex:1;padding:8px 2px;border-radius:10px}
+#drawer{position:fixed;inset:0;z-index:60}#drawer[hidden]{display:none}
+.dw{position:absolute;top:0;bottom:0;left:0;width:min(82vw,320px);background:var(--card);color:var(--tx);padding:calc(16px + env(safe-area-inset-top,0px)) 14px 16px;overflow:auto;box-shadow:2px 0 16px rgba(0,0,0,.35);animation:slr .22s ease}
+@keyframes slr{from{transform:translateX(-100%)}}
+.dw h4{margin:14px 0 4px;font-size:.75rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+.dw button{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 8px;border-radius:10px;font-size:1rem}.dw button:active{background:var(--ac2)}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><button id="menu" aria-label="Abrir menu">☰</button><h1>🌱 Calendário da Horta</h1><span class="fs"><button data-fs="-1" aria-label="Diminuir letra">A−</button><button data-fs="1" aria-label="Aumentar letra">A+</button></span></header>
+<div id="off" class="off" hidden>📴 Você está sem internet. O calendário e as suas configurações funcionam normalmente; só o clima do dia pode estar desatualizado.</div>
+<div id="ios" class="off" hidden>No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início" para instalar.</div>
+<div class="sub">Épocas de plantio, clima e fase da lua por região do Brasil<span id="ready"></span> <button id="inst" hidden>📲 Instalar app</button></div>
+<div class="bar" id="tabs"></div>
+<div class="locbar"><button id="chip" class="chip">📍 <span id="chiptxt"></span> ▾</button></div>
+<div id="loc" hidden><div class="bk"></div><div class="sh"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:1.1rem">📍 Local e clima</b><button id="locx">Concluir</button></div>
+<div class="bar">
+  <label>Região: <select id="reg"><option value="mgne">Nordeste de Minas (quente)</option><option value="sudeste">Sudeste</option><option value="sul">Sul</option><option value="cooeste">Centro-Oeste</option><option value="nordeste">Nordeste</option><option value="norte">Norte</option></select></label>
+  <label>Ambiente: <select id="env"><option value="">Todos</option><option>canteiro</option><option>vaso</option><option>estufa</option></select></label>
+  <label><input type="checkbox" id="moon"> Considerar a lua (tradição)</label>
+</div>
+<div id="clima" class="card"></div>
+<div id="tempo" class="card"><div class="row"><input type="text" id="cid" placeholder="Digite sua cidade (ex.: Belo Horizonte)"><button id="bc">Ver clima</button></div><div id="tinfo"><small>Busque sua cidade para ver o clima e saber se o dia é bom para plantar.</small></div></div>
+</div></div>
+<div id="seg" class="seg" hidden><button data-m="dia">Dia</button><button data-m="semana">Semana</button><button data-m="mes">Mês</button><button data-m="ano">Ano</button></div>
+<div class="nav"><button id="prev">◀</button><b id="title"></b><button id="next">▶</button><button id="today">Hoje</button></div>
+<div id="view"></div>
+<div class="leg">Regra tradicional usada: folhas → lua nova/crescente · frutos → crescente/cheia · flores → crescente · raízes, bulbos e tubérculos → minguante. É uma tradição agrícola popular; a época (mês) é o que mais pesa no resultado.</div>
+<div class="leg">Previsão do tempo: Open-Meteo. As épocas de plantio são referências gerais por região; confirme com a extensão rural (Emater) da sua área.</div>
+</main>
+<div id="drawer" hidden><div class="bk"></div><nav class="dw"><b style="font-size:1.1rem">🌱 Menu</b>
+<h4>Principal</h4><button data-go="painel">🏠 Painel</button><button data-go="horta">🧺 Minha horta</button>
+<h4>Calendário</h4><button data-go="dia">📅 Dia</button><button data-go="semana">🗓️ Semana</button><button data-go="mes">📆 Mês</button><button data-go="ano">🌾 Ano</button>
+<h4>Local</h4><button data-loc>📍 Local e clima</button>
+<h4>Configurações</h4><button data-sec="s-apar">🎨 Aparência e letra</button><button data-sec="s-lim">🌦️ Limites do tempo</button><button data-sec="s-lua">🌙 Lua por grupo</button><button data-sec="s-veg">🥬 Minhas hortaliças</button><button data-sec="s-bkp">💾 Backup</button>
+<h4>Ajuda</h4><button data-go="ajuda">❓ Como usar e sobre</button></nav></div>
+<script>
+const MES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const DS=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const FASE=["Nova","Crescente","Cheia","Minguante"];
+const LUA={folha:[0,1],fruto:[1,2],flor:[1],raiz:[3],bulbo:[3],tuberculo:[3]};
+const ALL=[1,2,3,4,5,6,7,8,9,10,11,12];
+const V=[
+{n:"Alface",g:"folha",m:[3,4,5,6,7,8,9],v:"Crespa, Americana, Roxa, Lisa",a:["canteiro","vaso","estufa"],c:"50-60 dias"},
+{n:"Couve",g:"folha",m:[2,3,4,5,6,7,8,9],v:"Manteiga, Georgia, Galega",a:["canteiro","vaso"],c:"70-90 dias"},
+{n:"Rúcula",g:"folha",m:[3,4,5,6,7,8,9],v:"Cultivada, Folha Larga",a:["canteiro","vaso","estufa"],c:"40 dias"},
+{n:"Espinafre",g:"folha",m:[4,5,6,7,8],v:"Nova Zelândia, Gigante",a:["canteiro","vaso"],c:"50 dias"},
+{n:"Salsa e cebolinha",g:"folha",m:ALL,v:"Salsa lisa, Salsa crespa, Cebolinha comum",a:["canteiro","vaso"],c:"60-90 dias"},
+{n:"Brócolis",g:"flor",m:[2,3,4,5,6,7],v:"Ramoso, Cabeça única",a:["canteiro"],c:"90-110 dias"},
+{n:"Tomate",g:"fruto",m:[1,2,8,9,10,11],v:"Italiano, Cereja, Salada, Débora",a:["canteiro","vaso","estufa"],c:"100-120 dias"},
+{n:"Pimentão",g:"fruto",m:[1,2,8,9,10,11],v:"Verde, Amarelo, Vermelho",a:["canteiro","vaso","estufa"],c:"100-120 dias"},
+{n:"Pepino",g:"fruto",m:[8,9,10,11,12,1,2],v:"Caipira, Japonês",a:["canteiro","estufa"],c:"60 dias"},
+{n:"Abobrinha",g:"fruto",m:[8,9,10,11,12,1,2,3],v:"Italiana, Menina Brasileira",a:["canteiro"],c:"50-60 dias"},
+{n:"Vagem",g:"fruto",m:[9,10,11,12,1,2,3],v:"Macarrão trepador, Rasteira",a:["canteiro","vaso"],c:"60-70 dias"},
+{n:"Quiabo",g:"fruto",m:[10,11,12,1],v:"Santa Cruz, Chifre de Veado",a:["canteiro"],c:"60-70 dias"},
+{n:"Cenoura",g:"raiz",m:[3,4,5,6,7,8,9],v:"Brasília, Nantes",a:["canteiro","vaso"],c:"90-100 dias"},
+{n:"Beterraba",g:"raiz",m:[3,4,5,6,7,8,9],v:"Early Wonder, Tall Top",a:["canteiro","vaso"],c:"60-70 dias"},
+{n:"Rabanete",g:"raiz",m:[2,3,4,5,6,7,8,9,10],v:"Crimson, Redondo",a:["canteiro","vaso","estufa"],c:"25-30 dias"},
+{n:"Cebola",g:"bulbo",m:[4,5,6,7],v:"Baia Periforme, Pira Ouro",a:["canteiro"],c:"120-150 dias"},
+{n:"Alho",g:"bulbo",m:[4,5,6],v:"Roxo, Branco",a:["canteiro","vaso"],c:"150-180 dias"},
+{n:"Batata-doce",g:"tuberculo",m:[10,11,12,1,2,3],v:"Roxa, Rosada, Amarela",a:["canteiro"],c:"120-150 dias"}
+];
+V.push({n:"Jiló",g:"fruto",v:"Morro Redondo, Comprido Verde Claro",a:["canteiro","vaso"],c:"100-120 dias"},{n:"Maxixe",g:"fruto",v:"Liso de Calcutá, Do Norte",a:["canteiro","vaso"],c:"60-70 dias"});
+const TIPO={"Alface":"frio","Couve":"frio","Rúcula":"frio","Espinafre":"frio","Salsa e cebolinha":"todo","Brócolis":"frio","Tomate":"solanacea","Pimentão":"solanacea","Pepino":"quente","Abobrinha":"quente","Vagem":"quente","Quiabo":"quente","Cenoura":"frio","Beterraba":"frio","Rabanete":"todo","Cebola":"frioForte","Alho":"frioForte","Batata-doce":"quente","Jiló":"quente","Maxixe":"quente"};
+V.forEach(v=>v.t=TIPO[v.n]);
+const REG={
+mgne:{nome:"Nordeste de Minas (Vale do Mucuri e arredores)",clima:"Tropical quente, de baixa altitude (cerca de 300 m). Inverno ameno e seco (início de julho com 17 a 27 °C e chuva média de julho em torno de 29 mm); verão quente, com as chuvas concentradas nos meses mais quentes.",dica:"No calor, plante no fim da tarde, use sombrite nas folhosas, cobertura morta no solo e cultivares tolerantes ao calor. Tomate e pimentão rendem melhor no período seco e mais fresco, com irrigação. Cebola e alho são pouco adaptados.",frio:[5,6,7,8],frioForte:[],quente:[10,11,12,1,2,3],solanacea:[4,5,6,7,8],calor:[35,38],todo:ALL},
+sudeste:{nome:"Sudeste (MG, SP, RJ, ES)",clima:"Tropical e tropical de altitude: verão quente e chuvoso, inverno ameno e seco.",dica:"No inverno seco, irrigue com frequência; nas serras altas, cuidado com geadas ocasionais.",frio:[3,4,5,6,7,8,9],frioForte:[4,5,6,7],quente:[8,9,10,11,12,1,2],todo:ALL},
+sul:{nome:"Sul (PR, SC, RS)",clima:"Subtropical: verões quentes, invernos frios com geadas e chuva bem distribuída o ano todo.",dica:"Proteja do frio e da geada de junho a agosto; frutos como tomate só depois do fim das geadas.",frio:[3,4,5,6,7,8,9],frioForte:[5,6,7],quente:[9,10,11,12],todo:ALL},
+cooeste:{nome:"Centro-Oeste (Cerrado)",clima:"Tropical de savana: chuva de outubro a abril e seca de maio a setembro.",dica:"Na seca as folhosas rendem mais (noites amenas), mas exigem irrigação; no calor das águas use sombrite.",frio:[4,5,6,7,8],frioForte:[5,6,7],quente:[9,10,11,12,1,2,3],todo:ALL},
+nordeste:{nome:"Nordeste",clima:"Litoral úmido e quente; sertão semiárido, muito quente, com chuva irregular.",dica:"No sertão, irrigação e sombreamento são essenciais; no litoral, evite canteiros baixos na época de muita chuva.",frio:[5,6,7,8,9],frioForte:[6,7,8],quente:[9,10,11,12,1,2,3,4],todo:ALL},
+norte:{nome:"Norte (Amazônia)",clima:"Equatorial: quente e úmido o ano todo, com chuva forte de dezembro a maio.",dica:"Prefira o período menos chuvoso (junho a outubro), canteiros elevados e sombra. Cebola e alho são pouco adaptados; folhosas de clima frio vão melhor em vaso ou estufa.",frio:[6,7,8,9],frioForte:[],quente:[6,7,8,9,10,11],todo:ALL}
+};
+const GRUPO={folha:"folha",fruto:"fruto",flor:"flor",raiz:"raiz",bulbo:"bulbo",tuberculo:"tubérculo"};
+const ICON=["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
+const SYN=29.530588853, REF=Date.UTC(2000,0,6,18,14);
+function lua(d){const t=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),15);let a=((t-REF)/864e5)%SYN;if(a<0)a+=SYN;
+ return {age:a,icon:ICON[Math.round(a/SYN*8)%8],f:Math.floor(((a+SYN/8)%SYN)/(SYN/4))%4};}
+let mode="painel",cur=new Date(),sel=new Date();
+const $=id=>document.getElementById(id);
+const env=()=>$("env").value;
+let PC=null;const pool=()=>PC||(PC=allV().filter(v=>!CFG.off.includes(v.n)&&(!env()||v.a.includes(env()))));
+const same=(a,b)=>a.toDateString()===b.toDateString();
+function tags(list,cls){return list.map(v=>`<span class="tag ${cls||""}" data-vn="${v.n}">${v.n}</span>`).join("")||"<small>nada</small>";}
+function plan(d){const L=lua(d),mm=d.getMonth()+1;
+ const ep=pool().filter(v=>v.m.includes(mm));
+ if(!$("moon").checked)return {L,ok:ep,wait:[]};
+ return {L,ok:ep.filter(v=>LUA[v.g].includes(L.f)),wait:ep.filter(v=>!LUA[v.g].includes(L.f))};}
+function nextIdeal(v,d){for(let i=1;i<=120;i++){const x=new Date(d);x.setDate(x.getDate()+i);if(v.m.includes(x.getMonth()+1)&&LUA[v.g].includes(lua(x).f))return x}return null}
+function waitList(list,d){return list.map(v=>{const n=nextIdeal(v,d);return `<span class="tag w">${v.n}${n?` → ${n.getDate()}/${n.getMonth()+1} ${lua(n).icon}`:""}</span>`}).join("")||"<small>nada</small>"}
+function dayCard(d){const p=plan(d);
+ return `<div class="card"><div class="wk"><span class="m" style="font-size:2rem">${p.L.icon}</span><div><b>${DS[d.getDay()]}, ${d.getDate()} de ${MES[d.getMonth()]} de ${d.getFullYear()}</b><br><small>Lua ${FASE[p.L.f]} · ${p.L.age.toFixed(1)} dias</small></div></div>
+ ${verdict(d)}<p><b>${$("moon").checked?"Plantar hoje (época + lua ideais)":"Plantar hoje (época ideal)"}</b><br>${okTags(p.ok,d)}</p>
+ ${$("moon").checked?`<p><b>${p.ok.length?"Época boa, mas a lua não é a ideal":"Hoje nenhuma tem época e lua ideais. Época boa, com a próxima data ideal"}</b><br>${waitList(p.wait,d)}</p>`:""}
+ ${p.ok.length?`<hr style="border:0;border-top:1px solid var(--bd)">`+p.ok.map(v=>`<p><b>${v.n}</b> <small>(${GRUPO[v.g]} · ciclo ${v.c})</small><br>Variedades: ${v.v}<br>Meses nesta região: ${v.m.map(x=>MES[x-1].slice(0,3)).join(", ")}<br>Ambientes: ${v.a.join(", ")}${(MAN[v.n]||{}).e?`<br>Espaçamento: ${MAN[v.n].e}`:""}</p>`).join(""):""}</div>`;}
+function render(){PC=null;
+ const TB={painel:["🏠","Painel"],cal:["📅","Calendário"],horta:["🧺","Horta"],cfg:["⚙️","Config"]};
+ if(!$("tabs").children.length)$("tabs").innerHTML=Object.keys(TB).map(m=>`<button data-m="${m}"><span>${TB[m][0]}</span>${TB[m][1]}</button>`).join("");
+ setOn();
+ const v=$("view");const R=REG[$("reg").value];$("clima").innerHTML=`<b>${R.nome}</b><br>${R.clima}<br><small>Dica: ${R.dica}</small>`;
+ document.querySelector(".nav").hidden=!CALM.includes(mode);chipTxt();
+ if(mode=="horta"){$("title").textContent="Minha horta";v.innerHTML=hortaPage();return}
+ if(mode=="ajuda"){$("title").textContent="Ajuda";v.innerHTML=ajudaPage();return}
+ if(mode=="painel"){$("title").textContent="Hoje";v.innerHTML=painelHTML();return}
+ if(mode=="cfg"){$("title").textContent="Configurações";v.innerHTML=cfgHTML();return}
+ if(mode=="dia"){$("title").textContent=sel.toLocaleDateString("pt-BR",{dateStyle:"long"});v.innerHTML=dayCard(sel);}
+ else if(mode=="semana"){const s=new Date(cur);s.setDate(s.getDate()-s.getDay());const e=new Date(s);e.setDate(e.getDate()+6);
+  $("title").textContent=`${s.getDate()}/${s.getMonth()+1} a ${e.getDate()}/${e.getMonth()+1}/${e.getFullYear()}`;
+  v.innerHTML=[...Array(7)].map((_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);const p=plan(d);
+   return `<div class="card wk" data-d="${d.toISOString()}"><span class="m">${p.L.icon}</span><div><b>${DS[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}</b> <small>Lua ${FASE[p.L.f]}</small><br>${tags(p.ok)}</div></div>`}).join("");}
+ else if(mode=="mes"){const y=cur.getFullYear(),m=cur.getMonth();$("title").textContent=`${MES[m]} de ${y}`;
+  const first=new Date(y,m,1),n=new Date(y,m+1,0).getDate();let h=DS.map(x=>`<div class="h">${x}</div>`).join("");
+  for(let i=0;i<first.getDay();i++)h+=`<div></div>`;
+  for(let i=1;i<=n;i++){const d=new Date(y,m,i),p=plan(d);h+=`<button class="d ${same(d,new Date())?"hoje":""}" data-d="${d.toISOString()}">${i}<br><span class="m">${p.L.icon}</span> <small>${p.ok.length}</small></button>`}
+  v.innerHTML=`<div class="grid">${h}</div><div class="leg">O número ao lado da lua é a quantidade de hortaliças ideais para plantar naquele dia. Toque no dia para ver os detalhes.</div>
+  <div class="card" style="margin-top:10px"><b>Em ${MES[m]}, a época é boa para:</b><br>${tags(pool().filter(x=>x.m.includes(m+1)))}</div>`;}
+ else{$("title").textContent=cur.getFullYear();
+  v.innerHTML=`<div class="yr">${MES.map((M,i)=>`<div class="card"><h3>${M}</h3>${tags(pool().filter(x=>x.m.includes(i+1)))}</div>`).join("")}</div>`;}
+}
+$("tabs").onclick=e=>{const b=e.target.closest("[data-m]");if(b)go(b.dataset.m)};
+$("view").onclick=e=>{const t=e.target.closest("[data-d]");if(t){sel=new Date(t.dataset.d);cur=new Date(sel);mode="dia";render()}};
+["env","moon","reg"].forEach(i=>$(i).onchange=()=>{CFG.env=$("env").value;CFG.moon=$("moon").checked;CFG.reg=$("reg").value;saveCfg();syncTop();if(W&&W.adm&&!inReg(W.adm)){W=null;$("tinfo").innerHTML="<small>Você mudou a região. Busque uma cidade dessa região para ver o clima.</small>"}render()});
+$("today").onclick=()=>{cur=new Date();sel=new Date();render()};
+function step(k){const d=new Date(mode=="dia"?sel:cur);
+ if(mode=="dia")d.setDate(d.getDate()+k);else if(mode=="semana")d.setDate(d.getDate()+7*k);else if(mode=="mes"){d.setDate(1);d.setMonth(d.getMonth()+k)}else d.setFullYear(d.getFullYear()+k);
+ cur=d;sel=new Date(d);render();}
+$("prev").onclick=()=>step(-1);$("next").onclick=()=>step(1);
+
+let W=null;
+const key=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const TR={frio:[5,30],frioForte:[3,27],quente:[13,38],solanacea:[10,34],todo:[5,35]};
+const wd=d=>W&&W.data[key(d)];
+function okTags(list,d){const w=wd(d);return list.map(v=>{const r=TR[v.t],bad=w&&(w.tmax>r[1]||w.tmin<r[0]);return `<span class="tag ${bad?"w":""}" data-vn="${v.n}">${v.n}${bad?" ⚠":""}</span>`}).join("")||"<small>nada</small>"}
+let LV=-1;const lvl=d=>{verdict(d);return LV};
+function verdict(d){LV=-1;const w=wd(d);
+ if(!w)return W?`<p><small>Sem previsão do tempo para este dia (a previsão cobre 7 dias).</small></p>`:`<p><small>Busque sua cidade acima para ver se o dia é bom para plantar.</small></p>`;
+ const L=LIM();let n=0,m=[];const up=x=>{n=Math.max(n,x)};
+ if(w.rain>=L.chuvaMax){up(2);m.push(`chuva forte prevista (${w.rain} mm) encharca o solo e derruba mudas`)}else if(w.rain>=L.chuva){up(1);m.push(`chuva moderada (${w.rain} mm): espere o solo escorrer`)}else if(w.rain>0.2){m.push(`chuva fraca (${w.rain} mm) ajuda no pegamento das mudas`)}
+ if(w.wind>=L.ventoMax){up(2);m.push("vento muito forte")}else if(w.wind>=L.vento){up(1);m.push("vento forte: proteja mudas novas")}
+ if(w.tmin<=L.frioMax){up(2);m.push("risco de geada")}else if(w.tmin<=L.frio){up(1);m.push("noite muito fria")}
+ const H=[L.calor,L.calorMax];if(w.tmax>=H[1]){up(2);m.push("calor extremo")}else if(w.tmax>=H[0]){up(1);m.push("calor: plante no fim da tarde, sombreie as mudas e regue bem")}
+ if(!m.length)m.push("tempo estável, sem riscos importantes");
+ LV=n;const t=["Bom dia para plantar ✅","Dia com atenção ⚠️","Melhor adiar o plantio ⛔"][n];
+ return `<div class="card" style="background:var(--${n?"warn":"ac2"})"><b>${t}</b><br><small>${W.city}: mín ${w.tmin}°C · máx ${w.tmax}°C · chuva ${w.rain} mm (${w.prob}%) · vento ${w.wind} km/h</small><br>${m.join("; ")}.<br><small>Hortaliças com ⚠ não combinam com a temperatura prevista.</small></div>`}
+const ESTADOS={sul:["parana","santa catarina","rio grande do sul"],sudeste:["minas gerais","sao paulo","rio de janeiro","espirito santo"],mgne:["minas gerais"],cooeste:["goias","mato grosso","mato grosso do sul","distrito federal","federal district"],nordeste:["maranhao","piaui","ceara","rio grande do norte","paraiba","pernambuco","alagoas","sergipe","bahia"],norte:["acre","amapa","amazonas","para","rondonia","roraima","tocantins"]};
+const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+const inReg=a=>(ESTADOS[CFG.reg]||[]).includes(norm(a));
+let CAND=[];
+const MSG=()=>navigator.onLine?"Não consegui obter o clima agora. Confira o nome da cidade e tente de novo.":"Sem internet no momento. Conecte-se para ver o clima de hoje.";
+async function loadCity(name){const t=$("tinfo");t.textContent="Buscando…";
+ try{const g=await(await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(name)+"&count=50&language=pt&countryCode=BR&country_code=BR")).json();
+  const br=(g.results||[]).filter(r=>r.country_code==="BR");
+  if(!br.length){t.innerHTML=`<small>Não encontrei "${name}" no Brasil. Confira o nome da cidade.</small>`;return}
+  CAND=br.filter(r=>inReg(r.admin1));
+  if(!CAND.length){const o=br.slice(0,3).map(r=>r.name+" - "+r.admin1).join(", ");t.innerHTML=`<small>Não encontrei "${name}" na região selecionada (${REG[CFG.reg].nome}). Encontrei em: ${o}. Troque a região no topo para usar essa cidade.</small>`;return}
+  if(CAND.length>1){t.innerHTML="Mais de uma cidade encontrada, escolha:<br>"+CAND.map((r,k)=>`<button data-pick="${k}">${r.name} - ${r.admin1}${r.admin2?" ("+r.admin2+")":""}</button>`).join(" ");return}
+  await loadPlace(CAND[0],name)
+ }catch(e){if(!useSaved(name)){W=null;t.innerHTML=`<small>${MSG()}</small>`}mode="painel";sel=new Date();cur=new Date();render()}}
+async function loadPlace(c,name){const t=$("tinfo");t.textContent="Carregando previsão…";
+ try{const f=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.latitude}&longitude=${c.longitude}&current=temperature_2m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=7`)).json();
+  const data={};f.daily.time.forEach((k,i)=>data[k]={tmax:Math.round(f.daily.temperature_2m_max[i]),tmin:Math.round(f.daily.temperature_2m_min[i]),rain:+(f.daily.precipitation_sum[i]||0).toFixed(1),prob:f.daily.precipitation_probability_max[i]||0,wind:Math.round(f.daily.wind_speed_10m_max[i])});
+  const alt=norm(c.name)!==norm(name);W={city:(alt?name:c.name)+" - "+c.admin1,adm:c.admin1,data};
+  t.innerHTML=`<b>${W.city}</b>${alt?` <small>(no mapa consta como ${c.name})</small>`:""} · agora ${Math.round(f.current.temperature_2m)}°C, umidade ${f.current.relative_humidity_2m}%`;
+  try{localStorage.setItem("cidade",name);localStorage.setItem("clima2",JSON.stringify({q:name.toLowerCase(),city:W.city,adm:c.admin1,data,ts:Date.now()}))}catch(e){}closeLoc();
+ }catch(e){if(!useSaved(name)){W=null;t.innerHTML=`<small>${MSG()}</small>`}}
+ mode="painel";sel=new Date();cur=new Date();render();}
+$("tinfo").addEventListener("click",e=>{const k=e.target.dataset.pick;if(k!==undefined)loadPlace(CAND[k],$("cid").value.trim())});
+$("bc").onclick=()=>{const v=$("cid").value.trim();if(v)loadCity(v)};
+$("cid").onkeydown=e=>{if(e.key==="Enter")$("bc").click()};
+
+const DEF={reg:"sudeste",env:"",moon:false,tema:"auto",lim:{},off:[],meses:{},moons:{},extra:[],plantios:[],fonte:100};
+const clone=o=>JSON.parse(JSON.stringify(o));
+let CFG=Object.assign(clone(DEF),(()=>{try{return JSON.parse(localStorage.getItem("cfgHorta"))||{}}catch(e){return {}}})());
+const saveCfg=()=>{try{localStorage.setItem("cfgHorta",JSON.stringify(CFG))}catch(e){}};
+const MOONBASE=clone(LUA);
+function applyCfg(){Object.assign(LUA,MOONBASE,CFG.moons);document.documentElement.dataset.theme=CFG.tema=="auto"?"":CFG.tema;document.documentElement.style.fontSize=(CFG.fonte||100)+"%"}
+const syncTop=()=>{$("reg").value=CFG.reg;$("env").value=CFG.env;$("moon").checked=CFG.moon;$("cid").placeholder="Cidade da região: "+REG[CFG.reg].nome};
+function allV(){const R=REG[CFG.reg]||REG.mgne;return V.concat(CFG.extra).map(v=>{v.m=CFG.meses[v.n]||R[v.t]||R.quente;return v})}
+const LIMD=()=>{const c=(REG[CFG.reg]||REG.mgne).calor||[32,36];return {chuva:10,chuvaMax:20,vento:25,ventoMax:40,frio:5,frioMax:2,calor:c[0],calorMax:c[1]}};
+const LIM=()=>Object.assign(LIMD(),CFG.lim);
+const GN={folha:"Folhas",fruto:"Frutos",flor:"Flores",raiz:"Raízes",bulbo:"Bulbos",tuberculo:"Tubérculos"};
+function cfgHTML(){const L=LIM();
+ const LB={chuva:"Chuva: atenção a partir de (mm)",chuvaMax:"Chuva: adiar a partir de (mm)",vento:"Vento: atenção a partir de (km/h)",ventoMax:"Vento: adiar a partir de (km/h)",frio:"Mínima: atenção até (°C)",frioMax:"Mínima: adiar até (°C)",calor:"Máxima: atenção a partir de (°C)",calorMax:"Máxima: adiar a partir de (°C)"};
+ const nums=Object.keys(LB).map(k=>`<label class="cf">${LB[k]}<input type="number" data-lim="${k}" value="${L[k]}"></label>`).join("");
+ const moons=Object.keys(GN).map(g=>`<div style="margin:4px 0">${GN[g]}: ${FASE.map((f,i)=>`<label><input type="checkbox" data-moon="${g}:${i}" ${LUA[g].includes(i)?"checked":""}> ${f}</label>`).join(" ")}</div>`).join("");
+ const vegs=allV().map(v=>`<div class="vg"><label><input type="checkbox" data-on="${v.n}" ${CFG.off.includes(v.n)?"":"checked"}> <b>${v.n}</b></label><input type="text" data-mes="${v.n}" value="${v.m.join(",")}" placeholder="meses, ex.: 5,6,7">${v.x?`<button data-del="${v.n}">🗑</button>`:""}</div>`).join("");
+ const tema=["auto","light","dark"].map(x=>`<option value="${x}" ${CFG.tema==x?"selected":""}>${{auto:"Automático",light:"Claro",dark:"Escuro"}[x]}</option>`).join("");
+ return `<div class="card" id="s-apar"><b>Aparência</b><br>Tema: <select id="tema">${tema}</select><br><br>Tamanho da letra: <b id="fv">${CFG.fonte||100}%</b><br><input type="range" id="fonte" min="80" max="150" step="5" value="${CFG.fonte||100}" style="width:100%"><button data-fs="0">Voltar ao tamanho padrão</button><br><br><small>Região, ambiente e lua ficam salvos pelos controles do topo. A cidade é lembrada ao buscar o clima.</small></div>
+<div class="card" id="s-lim"><b>Limites do tempo (veredito do dia)</b><br><small>Apague o número para voltar ao padrão da região.</small><div class="grid2">${nums}</div></div>
+<div class="card" id="s-lua"><b>Lua por tipo de hortaliça</b><br><small>Fases consideradas ideais para cada grupo (vale quando "Considerar a lua" está ligado).</small>${moons}</div>
+<div class="card" id="s-veg"><b>Minhas hortaliças</b><br><small>Desmarque as que você não planta. Em meses, escreva os números separados por vírgula; apague para voltar ao padrão.</small>${vegs}<hr style="border:0;border-top:1px solid var(--bd)"><b>Adicionar hortaliça</b>
+<div class="vg"><input type="text" id="cn" placeholder="Nome"><select id="cg">${Object.keys(GN).map(g=>`<option value="${g}">${GN[g]}</option>`).join("")}</select></div>
+<div class="vg"><input type="text" id="cm" placeholder="Meses (ex.: 3,4,5)"><input type="text" id="cv" placeholder="Variedades"></div>
+<div class="vg"><input type="text" id="ce" placeholder="Espaçamento (ex.: 30×20 cm)"><input type="text" id="cmn" placeholder="Manejo (opcional)"><button id="add">Adicionar</button></div></div>
+<div class="card" id="s-bkp"><b>Backup</b><br><small>Copie este texto para guardar suas configurações, ou cole outro para importar.</small><textarea id="cj">${JSON.stringify(CFG)}</textarea><div class="row"><button id="imp">Importar</button><button id="rst">Restaurar padrão</button></div></div>`}
+const meses=s=>s.split(",").map(Number).filter(n=>n>=1&&n<=12);
+$("view").addEventListener("change",e=>{const t=e.target,d=t.dataset;
+ if(d.lim!==undefined){const x=parseFloat(t.value);isNaN(x)?delete CFG.lim[d.lim]:CFG.lim[d.lim]=x}
+ else if(d.moon){const[g,i]=d.moon.split(":"),s=new Set(LUA[g]);t.checked?s.add(+i):s.delete(+i);CFG.moons[g]=[...s].sort()}
+ else if(d.on){const s=new Set(CFG.off);t.checked?s.delete(d.on):s.add(d.on);CFG.off=[...s]}
+ else if(d.mes){t.value.trim()?CFG.meses[d.mes]=meses(t.value):delete CFG.meses[d.mes]}
+ else if(t.id=="tema")CFG.tema=t.value;
+ else return;
+ saveCfg();applyCfg()});
+$("view").addEventListener("click",e=>{const t=e.target,d=t.dataset;
+ if(d.del){CFG.extra=CFG.extra.filter(x=>x.n!==d.del);delete CFG.meses[d.del]}
+ else if(t.id=="add"){const n=$("cn").value.trim();if(!n||allV().some(v=>v.n==n))return;CFG.extra.push({n,g:$("cg").value,t:"todo",v:$("cv").value||"—",a:["canteiro","vaso","estufa"],c:"—",x:1,e:$("ce").value.trim(),mn:$("cmn").value.trim()});CFG.meses[n]=meses($("cm").value)}
+ else if(t.id=="imp"){try{CFG=Object.assign(clone(DEF),JSON.parse($("cj").value))}catch(x){alert("Texto inválido");return}}
+ else if(t.id=="rst"){if(!confirm("Restaurar tudo ao padrão? Isso apaga também os plantios registrados."))return;CFG=clone(DEF)}
+ else return;
+ saveCfg();applyCfg();syncTop();render()});
+syncTop();applyCfg();
+
+const CALM=["dia","semana","mes","ano"];let LASTCAL="mes";
+function setOn(){if(CALM.includes(mode))LASTCAL=mode;[...$("tabs").children].forEach(b=>b.classList.toggle("on",b.dataset.m=="cal"?CALM.includes(mode):b.dataset.m==mode));[...$("seg").children].forEach(b=>b.classList.toggle("on",b.dataset.m==mode));$("seg").hidden=!CALM.includes(mode)}
+function go(m){if(m=="cal")m=LASTCAL;scrollTo(0,0);if(m==mode)return;mode=m;setOn();const vw=$("view");vw.classList.remove("anim");void vw.offsetWidth;vw.classList.add("anim");requestAnimationFrame(()=>render())}
+$("seg").onclick=e=>{const b=e.target.closest("[data-m]");if(b)go(b.dataset.m)};
+const openDr=()=>{$("drawer").hidden=false},closeDr=()=>{$("drawer").hidden=true};
+$("menu").onclick=openDr;
+$("drawer").onclick=e=>{if(e.target.classList.contains("bk")){closeDr();return}const b=e.target.closest("button");if(!b)return;const d=b.dataset;closeDr();
+ if(d.go)go(d.go);else if(d.sec){go("cfg");setTimeout(()=>{const s=$(d.sec);s&&s.scrollIntoView({behavior:"smooth"})},150)}};
+addEventListener("keydown",e=>{if(e.key=="Escape"){closeDr();closeLoc();sheetEl.hidden=true}});
+function fonte(n){CFG.fonte=n;saveCfg();applyCfg();const r=$("fonte");if(r){r.value=n;$("fv").textContent=n+"%"}}
+document.addEventListener("click",e=>{const s=e.target.dataset.fs;if(s!==undefined)fonte(s=="0"?100:Math.max(80,Math.min(150,(CFG.fonte||100)+(+s)*10)))});
+$("view").addEventListener("input",e=>{if(e.target.id=="fonte")fonte(+e.target.value)});
+function hortaPage(){const fe=(CFG.plantios||[]).filter(x=>x.ok).sort((a,b)=>(b.colhido||"").localeCompare(a.colhido||"")).slice(0,10);
+ return horta()+`<div class="card"><b>✅ Colheitas feitas</b>${fe.map(x=>`<div class="pl"><b>${x.n}</b> <small>plantada em ${fmtD(dt12(x.dt))}, colhida em ${x.colhido?fmtD(dt12(x.colhido)):"—"}</small></div>`).join("")||"<br><small>Nenhuma colheita registrada ainda.</small>"}</div>`}
+function ajudaPage(){return `<div class="card"><b>Como usar</b>
+<p>🏠 <b>Painel:</b> o resumo de hoje: clima, lua, o que plantar e os próximos 7 dias.</p>
+<p>📅 <b>Calendário:</b> veja por dia, semana, mês ou ano o que plantar na sua região.</p>
+<p>🧺 <b>Horta:</b> registre o que plantou e acompanhe a previsão de colheita.</p>
+<p>📍 <b>Local e clima:</b> escolha a região, o ambiente e a sua cidade (toque na linha do topo ou no menu).</p>
+<p>⚙️ <b>Config:</b> tema, tamanho da letra, limites do tempo, lua, hortaliças e backup.</p>
+<p>🔠 Use <b>A−</b> e <b>A+</b> no topo para mudar o tamanho da letra a qualquer momento.</p></div>
+<div class="card"><b>Sobre</b><p>Calendário da Horta · versão 7. Previsão do tempo: Open-Meteo. As épocas e o manejo são referências gerais por região do Brasil; confirme com a extensão rural da sua área. A influência da lua é uma tradição agrícola, sem comprovação científica sólida.</p><p>Seus dados (configurações e plantios) ficam salvos somente neste aparelho. Use o Backup nas configurações para guardá-los.</p></div>`}
+
+const chipTxt=()=>{$("chiptxt").textContent=(W?W.city.split(" - ")[0]:"Escolher cidade")+" · "+REG[CFG.reg].nome.split(" (")[0]+(CFG.env?" · "+CFG.env:"")+(CFG.moon?" · 🌙":"")};
+const openLoc=()=>{$("loc").hidden=false},closeLoc=()=>{$("loc").hidden=true};
+$("chip").onclick=openLoc;$("locx").onclick=closeLoc;$("loc").querySelector(".bk").onclick=closeLoc;
+document.addEventListener("click",e=>{if(e.target.dataset.loc!==undefined)openLoc()});
+
+const MAN={
+"Alface":{e:"20 a 30 cm entre plantas e entre linhas (americana: espaçamento maior)",p:"Semeie em bandeja e transplante com 20 a 30 dias, quando a muda tiver 4 a 6 folhas.",m:"Regas leves e frequentes, solo rico em matéria orgânica. No calor, use sombrite e plante em horário fresco. Colha antes do pendoamento.",v:"3 a 5 L por planta"},
+"Couve":{e:"50 cm entre plantas × 90 a 100 cm entre linhas",p:"Muda de sementeira, transplante com 5 a 6 folhas (cerca de 30 dias).",m:"Colha as folhas de baixo para cima, deixando as novas. Adubação de cobertura mensal; atenção a lagartas e pulgões.",v:"10 a 15 L"},
+"Rúcula":{e:"10 cm entre plantas × 20 cm entre linhas",p:"Semeadura direta rasa (até 1 cm) ou em bandeja; desbaste quando nascer.",m:"Solo sempre úmido, sem encharcar. No calor floresce rápido: prefira sombra e épocas frescas. Colha folhas jovens.",v:"3 a 5 L (jardineira)"},
+"Espinafre":{e:"25 cm entre linhas × 10 cm entre plantas (tipo Nova Zelândia: 50 × 40 cm)",p:"Semeadura direta, a cerca de 1 cm de profundidade.",m:"Prefere clima ameno e solo úmido e rico em matéria orgânica. Colha as folhas externas.",v:"3 a 5 L"},
+"Salsa e cebolinha":{e:"20 cm entre linhas × 10 cm entre plantas (cebolinha em touceiras)",p:"Salsa: semeadura direta ou muda. Cebolinha: divisão de touceiras ou mudas.",m:"Regue com frequência. Corte as folhas a 3 a 5 cm do solo para rebrotar e adube com húmus a cada 30 a 45 dias.",v:"3 a 5 L"},
+"Brócolis":{e:"50 cm entre plantas × 80 a 100 cm entre linhas",p:"Muda de sementeira, transplante com 25 a 30 dias.",m:"Solo fértil e bem drenado. Colha a cabeça principal antes de abrir as flores; as brotações laterais rendem depois. Cuidado com lagartas.",v:"15 a 20 L"},
+"Tomate":{e:"100 cm entre linhas × 50 cm entre plantas",p:"Muda de bandeja, transplante com 25 a 30 dias, enterrando um pouco o colo da planta.",m:"Tutore, retire os brotos laterais (desbrota) e regue no solo, sem molhar as folhas, para reduzir doenças. Rotação de canteiro.",v:"20 a 30 L (cereja: 15 L)"},
+"Pimentão":{e:"100 cm entre linhas × 50 cm entre plantas",p:"Muda de bandeja, transplante com 5 a 6 folhas (cerca de 40 a 45 dias).",m:"Tutore, regue com regularidade e evite encharcar. Adubação de cobertura; colha com cuidado para não quebrar os galhos.",v:"15 a 20 L"},
+"Pepino":{e:"100 cm entre linhas × 50 cm entre plantas, tutorado",p:"Semeadura direta (2 a 3 sementes por cova), deixando a planta mais vigorosa.",m:"Tutorar em tela ou bambu economiza espaço e melhora a sanidade. Regas regulares; colha novos para estimular a produção.",v:"15 a 20 L"},
+"Abobrinha":{e:"1,0 a 1,5 m entre linhas × 60 cm a 1,0 m entre plantas",p:"Semeadura direta em covas, 2 sementes a 3 cm; mantenha a mais forte.",m:"Sol pleno e regas na base. Colha com 15 a 20 cm para a planta seguir produzindo. Atenção ao oídio.",v:"30 L ou mais (pouco indicada para vaso)"},
+"Vagem":{e:"Trepadora: 100 × 50 cm, com tutor. Rasteira: 50 a 60 × 10 cm",p:"Semeadura direta, 2 a 3 cm de profundidade; não transplante.",m:"Dê tutor à trepadora, evite encharcar e colha com frequência. Precisa de pouca adubação nitrogenada.",v:"10 a 15 L, com tutor"},
+"Quiabo":{e:"100 cm entre linhas × 30 a 40 cm entre plantas",p:"Semeadura direta, 2 a 3 sementes por cova; faça o desbaste.",m:"Gosta de sol e calor. Colha os frutos novos (7 a 10 cm), com luvas, a cada 1 ou 2 dias.",v:"15 a 20 L"},
+"Cenoura":{e:"20 cm entre linhas × 5 cm entre plantas",p:"Semeadura direta a cerca de 1 cm; não transplante. Desbaste aos 15 a 20 dias.",m:"Solo solto e profundo, sem torrões e sem esterco fresco. Regas regulares; cubra os ombros com terra para não esverdearem.",v:"Vaso com pelo menos 30 cm de profundidade"},
+"Beterraba":{e:"25 cm entre linhas × 10 cm entre plantas",p:"Semeadura direta (cada semente dá várias plantas: faça o desbaste) ou muda.",m:"Solo fértil e sem encharcamento; regas regulares. Colhe-se com 5 a 8 cm de diâmetro.",v:"10 a 15 L, com 25 a 30 cm de profundidade"},
+"Rabanete":{e:"10 a 15 cm entre linhas × 5 cm entre plantas",p:"Semeadura direta, a 1 cm de profundidade.",m:"Ciclo rápido. Regas frequentes e regulares evitam rachaduras e sabor amargo; colha logo que engrossar.",v:"3 a 5 L, com 15 cm de profundidade"},
+"Cebola":{e:"30 cm entre linhas × 10 cm entre plantas",p:"Muda de sementeira (40 a 50 dias) transplantada para o canteiro.",m:"Solo bem drenado. Reduza a rega quando as folhas tombarem e deixe curar à sombra antes de guardar.",v:"Pouco indicada para vaso"},
+"Alho":{e:"25 cm entre linhas × 10 cm entre plantas",p:"Plante dentes sadios com a ponta para cima, a 3 a 5 cm de profundidade.",m:"Precisa de clima fresco para formar o bulbo. Evite encharcar, suspenda a rega quando as folhas amarelam e deixe curar à sombra.",v:"5 a 8 L, só em clima ameno"},
+"Batata-doce":{e:"80 a 100 cm entre linhas × 30 cm entre plantas",p:"Plante ramas de 25 a 30 cm, enterrando cerca de dois terços em leiras.",m:"Leiras altas (cerca de 30 cm). Rega até pegar; depois tolera calor e pouca água. Pouco nitrogênio para não render só folhas.",v:"30 L ou mais"},
+"Jiló":{e:"100 cm entre linhas × 60 cm entre plantas",p:"Muda de bandeja (35 a 40 dias) ou semeadura.",m:"Gosta de calor, regas regulares e tutor. Colha os frutos ainda verdes, antes de amarelar.",v:"15 a 20 L"},
+"Maxixe":{e:"100 cm entre linhas × 50 cm entre plantas",p:"Semeadura direta, 2 a 3 sementes por cova.",m:"Rústico e tolerante ao calor. Conduza em tutor ou deixe rasteiro; colha os frutos novos e verdes.",v:"15 a 20 L"}};
+const manejoHTML=v=>{const M=MAN[v.n]||{e:v.e,p:"",m:v.mn,v:""};
+ return [["📏 Espaçamento",M.e],["🌱 Como plantar",M.p],["🪴 Em vaso",M.v],["🧑‍🌾 Manejo",M.m]].filter(x=>x[1]).map(x=>`<p><b>${x[0]}:</b> ${x[1]}</p>`).join("")+(MAN[v.n]?`<small>Valores de referência (Embrapa e práticas comuns); variam com a cultivar e o sistema de cultivo.</small>`:"")};
+
+const ciclo=v=>{const m=((v&&v.c)||"").match(/(\d+)(?:-(\d+))?/);return m?(m[2]?Math.round((+m[1]+ +m[2])/2):+m[1]):60};
+const dt12=s=>new Date(s+"T12:00:00"),fmtD=d=>d.getDate()+"/"+(d.getMonth()+1);
+function horta(){const hoje=new Date();hoje.setHours(12,0,0,0);const all=CFG.plantios||[];
+ const P=all.filter(x=>!x.ok).map(x=>{const p=dt12(x.dt),f=new Date(p);f.setDate(f.getDate()+x.dias);return {...x,p,f,rest:Math.round((f-hoje)/864e5),pct:Math.max(0,Math.min(100,(hoje-p)/864e5/x.dias*100))}}).sort((a,b)=>a.rest-b.rest);
+ const pr=P.filter(x=>x.rest<=0).length,feitos=all.filter(x=>x.ok).length;
+ return `<div class="card"><b>🧺 Minha horta</b> <small>(${P.length} em andamento)</small>${pr?`<div class="off" style="margin-top:6px">🔔 ${pr} pronta${pr>1?"s":""} para colher</div>`:""}
+${P.map(x=>`<div class="pl"><div style="display:flex;justify-content:space-between;gap:6px"><b>${x.n}</b><small>${x.rest>0?`colhe em ${x.rest} dia${x.rest>1?"s":""} (~${fmtD(x.f)})`:x.rest==0?"colher hoje!":`pronta há ${-x.rest} dia${-x.rest>1?"s":""}`}</small></div><div class="pb"><i style="width:${x.pct}%" class="${x.rest<=0?"rd":""}"></i></div><small>Plantada em ${fmtD(x.p)}${x.nota?" · "+x.nota:""}</small> <button data-done="${x.id}">✔ Colhida</button> <button data-rm="${x.id}">🗑</button></div>`).join("")||"<br><small>Nada registrado ainda.</small>"}
+<br><button data-reg="">+ Registrar plantio</button>${feitos?` <small>· ${feitos} colheita${feitos>1?"s":""} feita${feitos>1?"s":""}</small>`:""}</div>`}
+function formPlantio(n){const L=allV(),v=L.find(x=>x.n==n)||L[0];
+ sheetEl.innerHTML=`<div class="bk"></div><div class="sh"><b style="font-size:1.15rem">Registrar plantio</b>
+<p>Hortaliça<br><select id="pn">${L.map(x=>`<option ${x.n==v.n?"selected":""}>${x.n}</option>`).join("")}</select></p>
+<p>Data do plantio<br><input type="date" id="pd" value="${key(new Date())}"></p>
+<p>Dias até a colheita (você pode ajustar)<br><input type="number" id="pdias" min="1" value="${ciclo(v)}"></p>
+<p>Observação (opcional)<br><input type="text" id="pnota" placeholder="ex.: canteiro 2"></p>
+<button data-save style="width:100%">Salvar</button><button id="sx" style="width:100%;margin-top:6px">Cancelar</button></div>`;sheetEl.hidden=false;
+ $("pn").onchange=()=>{$("pdias").value=ciclo(L.find(x=>x.n==$("pn").value))}}
+document.addEventListener("click",e=>{const t=e.target,d=t.dataset;
+ if(d.reg!==undefined)formPlantio(d.reg);
+ else if(d.save!==undefined){const n=$("pn").value,dt=$("pd").value,dias=parseInt($("pdias").value);if(!dt||!(dias>0))return;CFG.plantios.push({id:Date.now(),n,dt,dias,nota:$("pnota").value.trim(),ok:false});saveCfg();sheetEl.hidden=true;render()}
+ else if(d.done){const x=CFG.plantios.find(p=>p.id==d.done);if(x){x.ok=true;x.colhido=key(new Date());saveCfg();render()}}
+ else if(d.rm){if(confirm("Apagar este registro?")){CFG.plantios=CFG.plantios.filter(p=>p.id!=d.rm);saveCfg();render()}}});
+
+function painelHTML(){const d=new Date(),p=plan(d),w=wd(d),hr=d.getHours(),g=hr<12?"Bom dia":hr<18?"Boa tarde":"Boa noite";
+ const m1=d.getMonth()+1,m2=m1%12+1,P=pool(),cur=P.filter(v=>v.m.includes(m1)),nxt=P.filter(v=>v.m.includes(m2)&&!v.m.includes(m1));
+ const days=[...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);const q=plan(x),y=wd(x),l=y?lvl(x):-1;
+  return `<div class="sc" data-d="${x.toISOString()}"><small>${i?DS[x.getDay()]:"Hoje"}</small><b>${x.getDate()}</b><span>${q.L.icon}</span>${y?`<small>${y.tmax}°/${y.tmin}°</small><div class="rb"><i style="height:${Math.min(100,y.rain*6)}%"></i></div><small>${y.rain} mm</small>`:`<small>—</small>`}<i class="dot l${l<0?"n":l}"></i></div>`}).join("");
+ return `<div class="hero"><div style="display:flex;justify-content:space-between;align-items:center"><div><small>${g}!</small><div style="font-size:1.15rem;font-weight:600">${DS[d.getDay()]}, ${d.getDate()} de ${MES[d.getMonth()]}</div></div><span style="font-size:2.6rem">${p.L.icon}</span></div>
+<div style="margin-top:6px">Lua ${FASE[p.L.f]} · ${W?W.city+" · "+(w?w.tmin+"° a "+w.tmax+"°C":"sem previsão"):"busque sua cidade para ver o clima"}</div>${W?`<button data-rf>↻ Atualizar clima</button>`:`<button data-loc>📍 Escolher cidade</button>`}</div>
+${verdict(d)}
+<div class="card"><b>🌱 Plantar agora</b> <small>(${p.ok.length})</small><br>${okTags(p.ok,d)}<br><small>Toque em uma hortaliça para ver os detalhes.</small></div>
+${horta()}
+<b>Próximos 7 dias</b><div class="strip">${days}</div>
+<div class="leg" style="margin:0 0 10px">Bolinha: verde = bom, amarelo = atenção, vermelho = adiar, cinza = sem previsão. Barra azul = chuva prevista.</div>
+<div class="card"><b>📅 Planejar</b><br><small>Neste mês (${MES[m1-1]}):</small><br>${tags(cur)}<br><small>Entram em ${MES[m2-1]}:</small><br>${tags(nxt)}</div>`}
+const sheetEl=document.createElement("div");sheetEl.id="sheet";sheetEl.hidden=true;document.body.appendChild(sheetEl);
+function openSheet(n){const v=allV().find(x=>x.n==n);if(!v)return;
+ sheetEl.innerHTML=`<div class="bk"></div><div class="sh"><b style="font-size:1.15rem">${v.n}</b> <small>(${GN[v.g]||v.g} · ciclo ${v.c})</small><p><b>Variedades:</b> ${v.v}</p><p><b>Meses ideais aqui:</b> ${v.m.length?v.m.map(x=>MES[x-1].slice(0,3)).join(", "):"pouco adaptada a esta região"}</p><p><b>Ambientes:</b> ${v.a.join(", ")}</p>${manejoHTML(v)}<button data-reg="${v.n}" style="width:100%;margin-bottom:8px">🌱 Registrar plantio</button><p><b>Luas (tradição):</b> ${LUA[v.g].map(i=>FASE[i]).join(", ")||"—"}</p><button id="sx" style="width:100%">Fechar</button></div>`;sheetEl.hidden=false}
+document.addEventListener("click",e=>{const c=e.target.closest("[data-vn]");if(c){openSheet(c.dataset.vn);return}
+ if(e.target.classList.contains("bk")||e.target.id=="sx")sheetEl.hidden=true;
+ if(e.target.dataset.rf!==undefined){const n=$("cid").value.trim();if(n)loadCity(n)}});
+
+function useSaved(name){try{const s=JSON.parse(localStorage.getItem("clima2"));if(!s||s.q!==name.toLowerCase()||(s.adm&&!inReg(s.adm)))return false;
+ W={city:s.city,adm:s.adm,data:s.data};$("tinfo").innerHTML=`<b>${s.city}</b> <small>· dados salvos em ${new Date(s.ts).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})} (sem conexão)</small>`;return true}catch(e){return false}}
+const net=()=>{$("off").hidden=navigator.onLine};addEventListener("online",net);addEventListener("offline",net);net();
+if("serviceWorker" in navigator)navigator.serviceWorker.ready.then(()=>{$("ready").textContent=" · ✓ pronto para usar sem internet"}).catch(()=>{});
+let DP;addEventListener("beforeinstallprompt",e=>{e.preventDefault();DP=e;$("inst").hidden=false});
+$("inst").onclick=async()=>{if(DP){DP.prompt();await DP.userChoice;$("inst").hidden=true}};
+addEventListener("appinstalled",()=>{$("inst").hidden=true});
+if(/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone)$("ios").hidden=false;
+render();
+try{const s=localStorage.getItem("cidade");if(s){$("cid").value=s;loadCity(s)}}catch(e){}
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
